@@ -80,7 +80,7 @@ return {
               false,
             },
             {
-              "<c-s>",
+              "<m-s>",
               function()
                 return vim.lsp.buf.signature_help()
               end,
@@ -89,6 +89,7 @@ return {
               has = "signatureHelp",
             },
             { "gr", false },
+
             {
               "grr",
               function()

@@ -17,6 +17,4 @@ Snacks.toggle.option("scrollbind", { name = "Scrollbind" }):map("<localleader>us
 -- end, { desc = "Terminal (cwd)" })
 
 -- save file
-vim.keymap.del({ "i", "x", "n", "s" }, "<C-s>")
-vim.keymap.set({ "i", "x", "n", "s" }, "<M-s>", "<cmd>w<cr><esc>", { desc = "Save File" })
-vim.keymap.set({ "i", "x", "n", "s" }, "<M-S>", "<cmd>wa<cr><esc>", { desc = "Save All Files" })
+vim.keymap.set({ "i", "x", "n", "s" }, "<c-s-s>", "<cmd>wa<cr><esc>", { desc = "Save All Files" })
