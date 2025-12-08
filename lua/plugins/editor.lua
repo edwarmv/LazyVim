@@ -628,4 +628,79 @@ return {
     dependencies = { "MunifTanjim/nui.nvim" },
     opts = {},
   },
+  {
+    "michaelb/sniprun",
+    branch = "master",
+    build = "sh install.sh",
+    opts = function()
+      local opts = {
+        selected_interpreters = { "Lua_nvim", "JS_TS_bun" },
+        display = {
+          "VirtualLine",
+        },
+        snipruncolors = {
+          SniprunVirtualTextOk = {
+            bg = Snacks.util.color("DiagnosticVirtualTextOk", "bg"),
+            fg = Snacks.util.color("DiagnosticVirtualTextOk"),
+          },
+          SniprunVirtualTextErr = {
+            bg = Snacks.util.color("DiagnosticVirtualLinesError", "bg"),
+            fg = Snacks.util.color("DiagnosticVirtualLinesError"),
+          },
+        },
+      }
+
+      return opts
+    end,
+    keys = {
+      { mode = { "n", "v" }, "<leader>rr", "<Plug>SnipRun", desc = "SnipRun" },
+      { "<leader>r<cr>", "<CMD>%SnipRun<CR>", desc = "SnipRun - Entiry File" },
+      { "<leader>rc", "<CMD>SnipClose<CR>", desc = "SnipClose" },
+    },
+  },
+  {
+    "HawkinsT/pathfinder.nvim",
+    opts = function()
+      local function goto_line_column(window, line_arg, col_arg)
+        local target_line = math.max(1, line_arg)
+        local target_col = (col_arg and col_arg > 0) and (col_arg - 1) or 0
+        pcall(vim.api.nvim_win_set_cursor, window, { target_line, target_col })
+      end
+
+      return {
+        open_mode = function(escaped_target_path, line_arg, col_arg)
+          if vim.bo.buftype == "terminal" then
+            vim.cmd("ToggleTerm")
+          end
+          local open_cmd = "edit"
+          vim.cmd(open_cmd .. " " .. escaped_target_path)
+          -- For commands like :edit, set cursor on the current window (0).
+          if line_arg then
+            goto_line_column(0, line_arg, col_arg)
+          end
+        end,
+        remap_default_keys = false,
+      }
+    end,
+    keys = {
+      {
+        "gf",
+        function()
+          require("pathfinder").gf()
+        end,
+      },
+      {
+        "gF",
+        function()
+          require("pathfinder").gF()
+        end,
+      },
+      {
+        "gx",
+        function()
+          require("pathfinder").gx()
+        end,
+      },
+    },
+  },
 }

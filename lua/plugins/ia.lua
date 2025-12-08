@@ -1,6 +1,7 @@
 return {
   {
     "olimorris/codecompanion.nvim",
+    version = "v17.33.0",
     opts = function()
       return {
         strategies = {
@@ -46,9 +47,47 @@ return {
       "nvim-treesitter/nvim-treesitter",
     },
     keys = {
-      { "<localleader>ac", "<cmd>CodeCompanionChat Toggle<cr>", mode = { "n", "v" }, desc = "CodeCompanion Toggle" },
-      { "<localleader>aa", "<cmd>CodeCompanionActions<cr>", mode = { "n", "v" }, desc = "CodeCompanion Actions" },
-      { "<localleader>aA", "<cmd>CodeCompanionChat Add<cr>", mode = { "v" }, desc = "CodeCompanion Add" },
+      {
+        "<localleader>at",
+        "<cmd>CodeCompanionChat Toggle<cr>",
+        mode = { "n", "v" },
+        noremap = true,
+        silent = true,
+        desc = "CodeCompanion Toggle",
+      },
+      {
+        "<localleader>aa",
+        "<cmd>CodeCompanionActions<cr>",
+        mode = { "n", "v" },
+        noremap = true,
+        silent = true,
+        desc = "CodeCompanion Actions",
+      },
+      {
+        "<localleader>aA",
+        "<cmd>CodeCompanionChat Add<cr>",
+        mode = { "v" },
+        noremap = true,
+        silent = true,
+        desc = "CodeCompanion Add",
+      },
+    },
+  },
+  {
+    "yetone/avante.nvim",
+    opts = {
+      provider = "gpt-oss",
+      providers = {
+        ["gpt-oss"] = {
+          __inherited_from = "openai",
+          endpoint = "http://localhost:1234/v1",
+          model = "openai/gpt-oss-20b",
+          extra_request_body = {
+            max_completion_tokens = 131072,
+            max_tokens = 131072,
+          },
+        },
+      },
     },
   },
 }

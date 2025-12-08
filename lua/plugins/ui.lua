@@ -1,6 +1,7 @@
 return {
   {
     "stevearc/quicker.nvim",
+    enabled = false,
     ft = "qf",
     opts = {
       keys = {
@@ -22,8 +23,45 @@ return {
     },
   },
   {
+    "kevinhwang91/nvim-bqf",
+    dependencies = {
+      "junegunn/fzf",
+      version = "*",
+      build = "./install --bin",
+    },
+    enabled = true,
+    ft = "qf",
+    opts = {
+      auto_enable = true,
+      auto_resize_height = true,
+      delay_syntax = 80,
+      preview = {
+        border = vim.o.winborder,
+        winblend = 0,
+        should_preview_cb = function(bufnr, qwinid)
+          local ret = true
+          local bufname = vim.api.nvim_buf_get_name(bufnr)
+          local fsize = vim.fn.getfsize(bufname)
+          if fsize > 100 * 1024 then
+            -- skip file size greater than 100k
+            ret = false
+          elseif bufname:match("^fugitive://") then
+            -- skip fugitive buffer
+            ret = false
+          end
+          return ret
+        end,
+      },
+      filter = {
+        fzf = {
+          extra_opts = { "--bind", "ctrl-o:toggle-all", "--delimiter", "│" },
+        },
+      },
+    },
+  },
+  {
     "nvim-lualine/lualine.nvim",
-    enabled = false,
+    enabled = true,
     opts = function(_, opts)
       opts.options.disabled_filetypes.winbar = {
         "",
@@ -37,17 +75,6 @@ return {
         "snacks_terminal",
         "aerial",
       }
-      -- local function conflict_count()
-      --   local count = require("git-conflict").conflict_count()
-      --   return count > 0 and " " .. count or ""
-      -- end
-      -- local utils = require("lualine.utils.utils")
-      -- table.insert(opts.sections.lualine_x, 5, {
-      --   conflict_count,
-      --   color = function()
-      --     return { fg = utils.extract_highlight_colors("Error", "fg") }
-      --   end,
-      -- })
       opts.sections.lualine_b[1] = {
         "branch",
         fmt = function(value)
@@ -58,44 +85,187 @@ return {
           return ""
         end,
       }
-      table.insert(opts.sections.lualine_y, 1, { "filetype" })
-      opts.sections.lualine_c[1] = ""
-      opts.sections.lualine_c[3] = ""
-      opts.sections.lualine_c[4] = ""
-      opts.winbar = {
-        lualine_a = {
-          LazyVim.lualine.root_dir()[1],
-        },
-        lualine_b = {
-          {
-            "filetype",
-            icon_only = true,
-            padding = { left = 1, right = 0 },
-          },
-        },
-        lualine_c = {
-          { LazyVim.lualine.pretty_path(), padding = { left = 0, right = 1 } },
-        },
-      }
-      opts.inactive_winbar = {
-        lualine_a = {
-          LazyVim.lualine.root_dir()[1],
-        },
-        lualine_b = {
-          {
-            "filetype",
-            icon_only = true,
-            padding = { left = 1, right = 0 },
-          },
-        },
-        lualine_c = {
-          { LazyVim.lualine.pretty_path(), padding = { left = 0, right = 1 } },
-        },
-      }
+      table.insert(opts.extensions, "toggleterm")
     end,
   },
   {
+    "Bekaboo/dropbar.nvim",
+    dependencies = {
+      "nvim-telescope/telescope-fzf-native.nvim",
+      build = "make",
+    },
+    event = "VeryLazy",
+    opts = {
+      bar = {
+        enable = function(buf, win, _)
+          buf = vim._resolve_bufnr(buf)
+          if not vim.api.nvim_buf_is_valid(buf) or not vim.api.nvim_win_is_valid(win) then
+            return false
+          end
+
+          if
+            not vim.api.nvim_buf_is_valid(buf)
+            or not vim.api.nvim_win_is_valid(win)
+            or vim.fn.win_gettype(win) ~= ""
+            or vim.wo[win].winbar ~= ""
+            or vim.tbl_contains({
+              "oil",
+              "help",
+              "toggleterm",
+            }, vim.bo[buf].ft)
+          then
+            return false
+          end
+
+          local stat = vim.uv.fs_stat(vim.api.nvim_buf_get_name(buf))
+          if stat and stat.size > 1024 * 1024 then
+            return false
+          end
+
+          return vim.bo[buf].ft == "markdown"
+            or pcall(vim.treesitter.get_parser, buf)
+            or not vim.tbl_isempty(vim.lsp.get_clients({
+              bufnr = buf,
+              method = "textDocument/documentSymbol",
+            }))
+        end,
+      },
+      sources = {
+        path = {
+          -- disable preview because of No Alternate File error
+          -- <c-6> does not work
+          preview = false,
+        },
+      },
+      menu = {
+        keymaps = {
+          ["H"] = function()
+            local root = require("dropbar.utils").menu.get_current():root()
+            if not root then
+              return
+            end
+            root:close()
+
+            local dropbar =
+              require("dropbar.utils.bar").get({ buf = vim.api.nvim_win_get_buf(root.prev_win), win = root.prev_win })
+            if not dropbar then
+              root:toggle()
+              return
+            end
+
+            local current_idx
+            for idx, component in ipairs(dropbar.components) do
+              if component.menu == root then
+                current_idx = idx
+                break
+              end
+            end
+
+            if current_idx == nil or current_idx == 0 then
+              root:toggle()
+              return
+            end
+
+            vim.defer_fn(function()
+              dropbar:pick(current_idx - 1)
+            end, 100)
+          end,
+
+          ["L"] = function()
+            local root = require("dropbar.utils").menu.get_current():root()
+            if not root then
+              return
+            end
+            root:close()
+
+            local dropbar =
+              require("dropbar.utils.bar").get({ buf = vim.api.nvim_win_get_buf(root.prev_win), win = root.prev_win })
+            if not dropbar then
+              dropbar = require("dropbar.utils").bar.get_current()
+              if not dropbar then
+                root:toggle()
+                return
+              end
+            end
+
+            local current_idx
+            for idx, component in ipairs(dropbar.components) do
+              if component.menu == root then
+                current_idx = idx
+                break
+              end
+            end
+
+            if current_idx == nil or current_idx == #dropbar.components then
+              root:toggle()
+              return
+            end
+
+            vim.defer_fn(function()
+              dropbar:pick(current_idx + 1)
+            end, 100)
+          end,
+        },
+      },
+      icons = {
+        kinds = {
+          symbols = {
+            Text = " ",
+            Method = " ",
+            Function = " ",
+            Constructor = " ",
+            Field = " ",
+            Variable = " ",
+            Class = " ",
+            Interface = " ",
+            Module = " ",
+            Property = " ",
+            Unit = " ",
+            Value = " ",
+            Enum = " ",
+            Keyword = " ",
+            Snippet = " ",
+            Color = " ",
+            File = " ",
+            Reference = " ",
+            Folder = " ",
+            EnumMember = " ",
+            Constant = " ",
+            Struct = " ",
+            Event = " ",
+            Operator = " ",
+            TypeParameter = " ",
+          },
+        },
+      },
+    },
+    keys = {
+      {
+        "<leader>;",
+        function()
+          require("dropbar.api").pick()
+        end,
+        desc = "Dropbar - Pick",
+      },
+      {
+        "[;",
+        function()
+          require("dropbar.api").goto_context_start()
+        end,
+        desc = "Go to start of current context",
+      },
+      {
+        "];",
+        function()
+          require("dropbar.api").select_next_context()
+        end,
+        desc = "Select next context",
+      },
+    },
+  },
+  {
     "rebelot/heirline.nvim",
+    enabled = false,
     dependencies = {
       "zeioth/heirline-components.nvim",
       opts = function()
@@ -383,7 +553,7 @@ return {
   },
   {
     "akinsho/bufferline.nvim",
-    enabled = false,
+    enabled = true,
     opts = {
       options = {
         always_show_bufferline = true,
@@ -427,5 +597,13 @@ return {
       vim.g.better_whitespace_operator = "<localleader>s"
       vim.g.better_whitespace_filetypes_blacklist = { "dbout", "dashboard", "alpha", "snacks_dashboard" }
     end,
+  },
+  {
+    "Bekaboo/deadcolumn.nvim",
+    event = "VeryLazy",
+    init = function()
+      vim.opt.colorcolumn = "80"
+    end,
+    opts = {},
   },
 }

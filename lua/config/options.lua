@@ -4,6 +4,7 @@
 vim.g.lazyvim_blink_main = true
 vim.g.ai_cmp = false
 vim.g.snacks_animate = false
+vim.g.trouble_lualine = false
 
 local opt = vim.opt
 opt.winborder = "rounded"
@@ -14,8 +15,8 @@ opt.breakindent = true -- Indent wrapped lines to match line start
 opt.breakindentopt = "list:-1" -- Add padding for lists (if 'wrap' is set)
 opt.statuscolumn = ""
 opt.relativenumber = false
-opt.showmode = true
-opt.showcmd = true
+-- opt.showmode = true
+-- opt.showcmd = true
 opt.fillchars = {
   foldopen = "▼",
   foldclose = "▶",
