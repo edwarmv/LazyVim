@@ -44,7 +44,7 @@ function M.lsp_buf_rename()
 
       vim.lsp.buf.rename(new_name, {
         filter = function(c)
-          return c.id == client.id
+          return c.name == client.name
         end,
       })
     end)
