@@ -147,6 +147,10 @@ return {
       },
       statuscolumn = {
         enabled = false,
+        folds = {
+          open = true,
+          git_hl = true,
+        },
       },
       picker = {
         formatters = {
@@ -476,7 +480,6 @@ return {
     opts = {},
     cmd = { "DiffviewOpen" },
     keys = {
-      { "<leader>gdo", "<cmd>DiffviewOpen<cr>", desc = "Diffview - Open" },
       {
         "<leader>gdO",
         function()
@@ -702,5 +705,40 @@ return {
         end,
       },
     },
+  },
+  {
+    "ThePrimeagen/harpoon",
+    keys = function()
+      local keys = {
+        {
+          "gH",
+          function()
+            require("harpoon"):list():add()
+          end,
+          desc = "Harpoon File",
+        },
+        {
+          "gh",
+          function()
+            local harpoon = require("harpoon")
+            harpoon.ui:toggle_quick_menu(harpoon:list(), {
+              border = vim.o.winborder,
+            })
+          end,
+          desc = "Harpoon Quick Menu",
+        },
+      }
+
+      for i = 1, 9 do
+        table.insert(keys, {
+          "<leader>" .. i,
+          function()
+            require("harpoon"):list():select(i)
+          end,
+          desc = "Harpoon to File " .. i,
+        })
+      end
+      return keys
+    end,
   },
 }

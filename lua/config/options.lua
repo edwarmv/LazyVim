@@ -3,7 +3,7 @@
 -- Add any additional options here
 vim.g.lazyvim_blink_main = true
 vim.g.ai_cmp = false
-vim.g.snacks_animate = false
+vim.g.snacks_animate = true
 vim.g.trouble_lualine = false
 
 local opt = vim.opt

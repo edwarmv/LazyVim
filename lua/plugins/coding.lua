@@ -14,10 +14,14 @@ return {
   {
     "saghen/blink.cmp",
     enabled = false,
-    opts = {
-      keymap = {
-        preset = "default",
+    dependencies = {
+      {
+        "windwp/nvim-autopairs",
+        event = "InsertEnter",
+        opts = {},
       },
+    },
+    opts = {
       appearance = {
         kind_icons = {
           Text = "",
@@ -79,7 +83,7 @@ return {
         },
         documentation = {
           window = {
-            border = nil,
+            border = "padded",
           },
         },
         menu = {
@@ -106,10 +110,10 @@ return {
   },
   {
     "hrsh7th/nvim-cmp",
+    enabled = true,
     dependencies = {
       {
         "windwp/nvim-autopairs",
-        event = "VeryLazy",
         opts = {},
       },
       {
@@ -162,6 +166,7 @@ return {
   },
   {
     "nvim-mini/mini.ai",
+    enabled = false,
     opts = function(_, opts)
       opts.custom_textobjects.t = false
     end,

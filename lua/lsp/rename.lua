@@ -1,7 +1,12 @@
 local M = {}
 
 function M.lsp_buf_rename()
-  -- Pre-fill with the word under cursor
+  local bufnr = vim.api.nvim_get_current_buf()
+  local win = vim.api.nvim_get_current_win()
+
+  -- Save cursor position explicitly
+  local cursor = vim.api.nvim_win_get_cursor(win)
+
   local current_name = vim.fn.expand("<cword>")
 
   vim.ui.input({
@@ -12,9 +17,12 @@ function M.lsp_buf_rename()
       return
     end
 
-    -- Get clients attached to the buffer
-    local clients = vim.lsp.get_clients({ bufnr = 0 })
+    -- Restore cursor position BEFORE rename
+    vim.api.nvim_win_set_cursor(win, cursor)
+
+    local clients = vim.lsp.get_clients({ bufnr = bufnr })
     local rename_clients = {}
+
     for _, c in ipairs(clients) do
       if c.supports_method("textDocument/rename") then
         table.insert(rename_clients, c)
@@ -31,7 +39,6 @@ function M.lsp_buf_rename()
       return
     end
 
-    -- Multiple clients → select one
     vim.ui.select(rename_clients, {
       prompt = "Select LSP to rename with:",
       format_item = function(c)
@@ -41,6 +48,9 @@ function M.lsp_buf_rename()
       if not client then
         return
       end
+
+      -- Restore again, just to be safe
+      vim.api.nvim_win_set_cursor(win, cursor)
 
       vim.lsp.buf.rename(new_name, {
         filter = function(c)

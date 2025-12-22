@@ -66,9 +66,9 @@ return {
       },
       servers = {
         ["*"] = {
-          on_attach = function(_, bufnr)
-            vim.lsp.document_color.enable(true, bufnr, { style = " " })
-          end,
+          -- on_attach = function(_, bufnr)
+          --   vim.lsp.document_color.enable(true, bufnr, { style = " " })
+          -- end,
           keys = {
             {
               "gK",
@@ -151,6 +151,14 @@ return {
         },
         ["html"] = {
           filetypes = { "html", "templ", "htmlangular" },
+        },
+        ["cssls"] = {
+          filetypes = { "css", "less" },
+          settings = {
+            scss = {
+              validate = false,
+            },
+          },
         },
       },
       setup = {

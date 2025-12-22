@@ -569,8 +569,14 @@ return {
     "folke/noice.nvim",
     opts = {
       lsp = {
+        override = {
+          ["vim.lsp.util.convert_input_to_markdown_lines"] = false,
+          ["vim.lsp.util.stylize_markdown"] = false,
+          ["cmp.entry.get_documentation"] = false,
+        },
         hover = {
           enabled = false,
+          silent = true,
         },
         signature = {
           enabled = false,
@@ -585,6 +591,20 @@ return {
             style = "none",
             padding = { 0, 1 },
           },
+        },
+      },
+      routes = {
+        {
+          filter = {
+            event = "msg_show",
+            any = {
+              { kind = "lua_error" },
+              { find = "%d+L, %d+B" },
+              { find = "; after #%d+" },
+              { find = "; before #%d+" },
+            },
+          },
+          view = "mini",
         },
       },
     },
