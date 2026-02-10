@@ -3,18 +3,19 @@
 -- Add any additional options here
 vim.g.lazyvim_blink_main = true
 vim.g.ai_cmp = false
-vim.g.snacks_animate = true
-vim.g.trouble_lualine = false
+vim.g.snacks_animate = false
+vim.g.trouble_lualine = true
 
 local opt = vim.opt
 opt.winborder = "rounded"
 opt.pumblend = 0
 opt.wrap = true
-opt.linebreak = false -- Wrap lines at 'breakat' (if 'wrap' is set)
+opt.linebreak = true -- Wrap lines at 'breakat' (if 'wrap' is set)
 opt.breakindent = true -- Indent wrapped lines to match line start
 opt.breakindentopt = "list:-1" -- Add padding for lists (if 'wrap' is set)
 opt.statuscolumn = ""
 opt.relativenumber = false
+opt.cursorcolumn = true
 -- opt.showmode = true
 -- opt.showcmd = true
 opt.fillchars = {
@@ -32,4 +33,5 @@ opt.listchars = {
   eol = " ",
 }
 opt.foldcolumn = "1"
--- opt.showbreak = "↪"
+opt.showbreak = "↪"
+vim.cmd("packadd nvim.undotree")

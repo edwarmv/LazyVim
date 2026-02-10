@@ -1,11 +1,17 @@
 return {
   {
     "olimorris/codecompanion.nvim",
+    cmd = {
+      "CodeCompanion",
+      "CodeCompanionChat",
+      "CodeCompanionCmd",
+      "CodeCompanionActions",
+    },
     opts = function()
       return {
         strategies = {
           chat = {
-            adapter = "gpt-oss",
+            adapter = "copilot",
             keymaps = {
               clear = {
                 modes = {
@@ -47,7 +53,7 @@ return {
     },
     keys = {
       {
-        "<localleader>at",
+        "<leader>act",
         "<cmd>CodeCompanionChat Toggle<cr>",
         mode = { "n", "v" },
         noremap = true,
@@ -55,7 +61,7 @@ return {
         desc = "CodeCompanion Toggle",
       },
       {
-        "<localleader>aa",
+        "<leader>aca",
         "<cmd>CodeCompanionActions<cr>",
         mode = { "n", "v" },
         noremap = true,
@@ -63,7 +69,7 @@ return {
         desc = "CodeCompanion Actions",
       },
       {
-        "<localleader>aA",
+        "<leader>acA",
         "<cmd>CodeCompanionChat Add<cr>",
         mode = { "v" },
         noremap = true,
@@ -74,6 +80,7 @@ return {
   },
   {
     "yetone/avante.nvim",
+    optional = true,
     opts = {
       provider = "gpt-oss",
       providers = {
@@ -88,5 +95,47 @@ return {
         },
       },
     },
+  },
+  {
+    "folke/sidekick.nvim",
+    optional = true,
+    opts = {
+      nes = {
+        debounce = 500,
+      },
+      cli = {
+        mux = {
+          backend = "tmux",
+          enabled = false,
+        },
+        tools = {
+          opencode = {
+            keys = { prompt = { "<a-p>", "prompt" } },
+          },
+        },
+      },
+    },
+    keys = {
+      {
+        "<c-.>",
+        function()
+          require("sidekick.cli").toggle({ name = "opencode" })
+        end,
+        desc = "Sidekick Toggle",
+        mode = { "n", "t", "i", "x" },
+      },
+      {
+        "<leader>aa",
+        function()
+          require("sidekick.cli").toggle({ name = "opencode" })
+        end,
+        desc = "Sidekick Toggle CLI",
+      },
+    },
+  },
+  {
+    "zbirenbaum/copilot.lua",
+    optional = true,
+    opts = {},
   },
 }

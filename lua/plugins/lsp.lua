@@ -7,6 +7,22 @@ end
 
 return {
   {
+    "mason-org/mason.nvim",
+    opts = {
+      ensure_installed = {
+        "stylua",
+        "shfmt",
+        "astro-language-server",
+        "emmet-language-server",
+        "css-variables-language-server",
+        "bash-language-server",
+        "some-sass-language-server",
+        "tailwindcss-language-server",
+        "vim-language-server",
+      },
+    },
+  },
+  {
     "neovim/nvim-lspconfig",
     dependencies = {
       {

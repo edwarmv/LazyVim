@@ -3,6 +3,9 @@ return {
     "rose-pine/neovim",
     name = "rose-pine",
     opts = {
+      styles = {
+        transparency = false,
+      },
       dim_inactive_windows = true,
       highlight_groups = {
         ExtraWhitespace = { fg = "love", bg = "love", blend = 20 },
@@ -12,53 +15,118 @@ return {
         BlinkCmpDocBorder = { fg = "highlight_high", bg = "highlight_low" },
         PmenuSel = { fg = "none", bg = "overlay" },
         BufferLineTabSelected = { fg = "text", bg = "base" },
-        CmpKitMarkdownAnnotateUnderlined = { fg = "foam", sp = "foam", underline = true },
-        CmpKitMarkdownAnnotateBold = { fg = "foam", bold = true },
-        CmpKitMarkdownAnnotateEm = { fg = "foam", sp = "foam", bold = true, underline = true },
-        CmpKitMarkdownAnnotateStrong = { bg = "iris", blend = 15, sp = "iris", bold = true },
-        CmpKitMarkdownAnnotateCodeBlock = { bg = "overlay", blend = 30 },
-        CmpKitMarkdownAnnotateHeading1 = { fg = "foam", blend = 30 },
-        CmpKitMarkdownAnnotateHeading2 = { fg = "foam", blend = 30 },
-        CmpKitMarkdownAnnotateHeading3 = { fg = "foam", blend = 30 },
-        CmpKitMarkdownAnnotateHeading4 = { fg = "foam", blend = 30 },
-        CmpKitMarkdownAnnotateHeading5 = { fg = "foam", blend = 30 },
-        CmpKitMarkdownAnnotateHeading6 = { fg = "foam", blend = 30 },
-        CmpKitDeprecated = { fg = "subtle", sp = "subtle", strikethrough = true },
-        CmpKitCompletionItemLabel = { fg = "subtle" },
-        CmpKitCompletionItemDescription = { fg = "muted" },
-        CmpKitCompletionItemMatch = { fg = "text", bold = true },
-        CmpKitCompletionItemExtra = { fg = "muted" },
-        CmpKitCompletionItemKind_Interface = { fg = "foam" },
-        CmpKitCompletionItemKind_TypeParameter = { fg = "foam" },
-        CmpKitCompletionItemKind_Color = { fg = "foam" },
-        CmpKitCompletionItemKind_Field = { fg = "foam" },
-        CmpKitCompletionItemKind_Value = { fg = "foam" },
-        CmpKitCompletionItemKind_Snippet = { fg = "gold" },
-        CmpKitCompletionItemKind_Enum = { fg = "foam" },
-        CmpKitCompletionItemKind_Event = { fg = "foam" },
-        CmpKitCompletionItemKind_Constructor = { fg = "foam" },
-        CmpKitCompletionItemKind_EnumMember = { fg = "foam" },
-        CmpKitCompletionItemKind_Folder = { fg = "foam" },
-        CmpKitCompletionItemKind_Module = { fg = "foam" },
-        CmpKitCompletionItemKind_File = { fg = "foam" },
-        CmpKitCompletionItemKind_Property = { fg = "foam" },
-        CmpKitCompletionItemKind_Method = { fg = "iris" },
-        CmpKitCompletionItemKind_Constant = { fg = "foam" },
-        CmpKitCompletionItemKind_Variable = { fg = "text" },
-        CmpKitCompletionItemKind_Reference = { fg = "foam" },
-        CmpKitCompletionItemKind_Unit = { fg = "foam" },
-        CmpKitCompletionItemKind_Struct = { fg = "foam" },
-        CmpKitCompletionItemKind_Function = { fg = "rose" },
-        CmpKitCompletionItemKind_Class = { fg = "foam" },
-        CmpKitCompletionItemKind_Keyword = { fg = "foam" },
-        CmpKitCompletionItemKind_Text = { fg = "foam" },
-        CmpKitCompletionItemKind_Operator = { fg = "foam" },
         ConflictMarkerBegin = { bg = "gold", blend = 40 },
         ConflictMarkerOurs = { bg = "gold", blend = 20 },
         ConflictMarkerTheirs = { bg = "foam", blend = 20 },
         ConflictMarkerEnd = { bg = "foam", blend = 40 },
         ConflictMarkerCommonAncestorsHunk = { bg = "love", blend = 40 },
+        ResolveOursMarker = { link = "DiffAdd" },
+        ResolveTheirsMarker = { link = "DiffChange" },
+        ResolveSeparatorMarker = { link = "NonText" },
+        ResolveAncestorMarker = { link = "DiffText" },
+        ResolveOursSection = { link = "DiffAdd" },
+        ResolveTheirsSection = { link = "DiffChange" },
+        ResolveAncestorSection = { link = "DiffText" },
+      },
+      groups = {
+        git_change = "gold",
       },
     },
   },
+  --[[ {
+    "scottmckendry/cyberdream.nvim",
+    opts = {
+      variant = "auto",
+      transparent = true,
+    },
+  }, ]]
+  --[[ {
+    "rebelot/kanagawa.nvim",
+    build = ":KanagawaCompile",
+    opts = {
+      compile = true,
+      overrides = function(colors)
+        local color = require("kanagawa.lib.color")
+        local theme = colors.theme
+
+        return {
+          ExtraWhitespace = { bg = color(theme.ui.bg):blend(theme.term[2], 0.15):to_hex(), fg = theme.term[2] },
+          ["@markup.link"] = { link = "Special" },
+          htmlLink = { link = "Special" },
+          FlashBackdrop = { fg = theme.syn.comment },
+          IlluminatedWordText = { link = "LspReferenceText" },
+          IlluminatedWordRead = { link = "LspReferenceRead" },
+          IlluminatedWordWrite = { link = "LspReferenceWrite" },
+        }
+      end,
+    },
+  }, ]]
+  --[[ {
+    "loctvl842/monokai-pro.nvim",
+    opts = {
+      day_night = {
+        enable = true,
+        day_filter = "light",
+      },
+    },
+  }, ]]
+  --[[ {
+    "olimorris/onedarkpro.nvim",
+    opts = {},
+  }, ]]
+  {
+    "sainnhe/gruvbox-material",
+    init = function()
+      vim.g.gruvbox_material_better_performance = 1
+      vim.g.gruvbox_material_float_style = "dim"
+
+      vim.api.nvim_create_autocmd("ColorScheme", {
+        group = vim.api.nvim_create_augroup("custom_highlights_gruvboxmaterial", {}),
+        pattern = "gruvbox-material",
+        callback = function()
+          local config = vim.fn["gruvbox_material#get_configuration"]()
+          local palette =
+            vim.fn["gruvbox_material#get_palette"](config.background, config.foreground, config.colors_override)
+          local set_hl = vim.fn["gruvbox_material#highlight"]
+
+          set_hl("ExtraWhitespace", palette.red, palette.bg_visual_red)
+
+          vim.api.nvim_set_hl(0, "ResolveOursMarker", { link = "DiffAdd" })
+          vim.api.nvim_set_hl(0, "ResolveTheirsMarker", { link = "DiffChange" })
+          vim.api.nvim_set_hl(0, "ResolveSeparatorMarker", { link = "NonText" })
+          vim.api.nvim_set_hl(0, "ResolveAncestorMarker", { link = "DiffText" })
+          vim.api.nvim_set_hl(0, "ResolveOursSection", { link = "DiffAdd" })
+          vim.api.nvim_set_hl(0, "ResolveTheirsSection", { link = "DiffChange" })
+          vim.api.nvim_set_hl(0, "ResolveAncestorSection", { link = "DiffText" })
+        end,
+      })
+    end,
+  },
+  --[[ {
+    "sainnhe/everforest",
+    init = function()
+      vim.g.everforest_enable_italic = true
+      vim.g.everforest_dim_inactive_windows = true
+      vim.g.everforest_better_performance = true
+      vim.g.everforest_disable_terminal_colors = 1
+
+      vim.api.nvim_create_autocmd("ColorScheme", {
+        group = vim.api.nvim_create_augroup("custom_highlights_everforest", {}),
+        pattern = "everforest",
+        callback = function()
+          local config = vim.fn["everforest#get_configuration"]()
+          local palette = vim.fn["everforest#get_palette"](config.background, config.colors_override)
+          local set_hl = vim.fn["everforest#highlight"]
+
+          set_hl("LuasnipInsertNodePassive", palette.none, palette.bg_visual)
+          set_hl("LuasnipChoiceNodePassive", palette.none, palette.bg_visual)
+          set_hl("ExtraWhitespace", palette.red, palette.bg_red)
+        end,
+      })
+    end,
+  }, ]]
+  --[[ {
+    "zenbones-theme/zenbones.nvim",
+    dependencies = "rktjmp/lush.nvim",
+  }, ]]
 }

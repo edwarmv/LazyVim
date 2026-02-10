@@ -1,6 +1,7 @@
 return {
   {
     "L3MON4D3/LuaSnip",
+    optional = true,
     event = "VeryLazy",
     opts = function(_, opts)
       local ls = require("luasnip")
@@ -12,8 +13,39 @@ return {
     end,
   },
   {
+    "nvim-mini/mini.snippets",
+    optional = true,
+    opts = function(_, opts)
+      -- By default, for opts.snippets, the extra for mini.snippets only adds gen_loader.from_lang()
+      -- This provides a sensible quickstart, integrating with friendly-snippets
+      -- and your own language-specific snippets
+      --
+      -- In order to change opts.snippets, replace the entire table inside your own opts
+
+      local snippets, config_path = require("mini.snippets"), vim.fn.stdpath("config")
+
+      local javascript = "**/javascript.json"
+      local react = "**/react.json"
+      local lang_patterns = {
+        typescript = { javascript },
+        astro = { javascript },
+        tsx = { react, javascript },
+      }
+      opts.snippets = { -- override opts.snippets provided by extra...
+        -- Load custom file with global snippets first (order matters)
+        snippets.gen_loader.from_file(config_path .. "/snippets/global.json"),
+
+        -- Load snippets based on current language by reading files from
+        -- "snippets/" subdirectories from 'runtimepath' directories.
+        snippets.gen_loader.from_lang({
+          lang_patterns = lang_patterns,
+        }), -- this is the default in the extra...
+      }
+    end,
+  },
+  {
     "saghen/blink.cmp",
-    enabled = false,
+    optional = true,
     dependencies = {
       {
         "windwp/nvim-autopairs",
@@ -22,6 +54,11 @@ return {
       },
     },
     opts = {
+      keymap = {
+        preset = "enter",
+        ["<C-y>"] = { "select_and_accept" },
+        ["<C-e>"] = { "cancel", "fallback" },
+      },
       appearance = {
         kind_icons = {
           Text = "",
@@ -57,23 +94,20 @@ return {
             opts = { tailwind_color_icon = "" },
             fallbacks = {},
           },
-          -- snippets = {
-          --   opts = {
-          --     extended_filetypes = {
-          --       typescript = { "javascript" },
-          --       astro = { "javascript" },
-          --     },
-          --   },
-          -- },
-          buffer = {
-            max_items = 5,
+          snippets = {
+            opts = {
+              extended_filetypes = {
+                typescript = { "javascript" },
+                astro = { "javascript" },
+              },
+            },
           },
         },
       },
       completion = {
         list = {
           selection = {
-            preselect = true,
+            preselect = false,
             auto_insert = true,
           },
         },
@@ -95,9 +129,7 @@ return {
       },
       fuzzy = {
         sorts = {
-          "exact",
           "score",
-          "kind",
           "sort_text",
           "label",
         },
@@ -110,7 +142,7 @@ return {
   },
   {
     "hrsh7th/nvim-cmp",
-    enabled = true,
+    optional = false,
     dependencies = {
       {
         "windwp/nvim-autopairs",
@@ -174,11 +206,12 @@ return {
   {
     "gbprod/yanky.nvim",
     dependencies = {
+      enabled = not vim.g.vscode,
       "kkharji/sqlite.lua",
     },
     opts = {
       ring = {
-        storage = "sqlite",
+        storage = vim.g.vscode and "shada" or "sqlite",
       },
     },
   },

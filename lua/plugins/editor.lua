@@ -34,32 +34,45 @@ return {
         desc = "Move Cursor Right",
       },
       {
-        "<localleader><localleader>h",
+        "<leader><leader>h",
         function()
           require("smart-splits").swap_buf_left()
         end,
         desc = "Swap Buf Left",
       },
       {
-        "<localleader><localleader>j",
+        "<leader><leader>j",
         function()
           require("smart-splits").swap_buf_down()
         end,
         desc = "Swap Buf Down",
       },
       {
-        "<localleader><localleader>k",
+        "<leader><leader>k",
         function()
           require("smart-splits").swap_buf_up()
         end,
         desc = "Swap Buf Up",
       },
       {
-        "<localleader><localleader>l",
+        "<leader><leader>l",
         function()
           require("smart-splits").swap_buf_right()
         end,
         desc = "Swap Buf Right",
+      },
+    },
+  },
+  {
+    "stevearc/aerial.nvim",
+    optional = true,
+    keys = {
+      {
+        "gss",
+        function()
+          require("aerial").snacks_picker()
+        end,
+        desc = "Aerial Snacks Picker",
       },
     },
   },
@@ -95,7 +108,7 @@ return {
         desc = "Flash Treesitter",
       },
       {
-        "<c-.>",
+        "<m-.>",
         mode = { "n", "x", "o" },
         function()
           require("flash").jump({ continue = true })
@@ -204,6 +217,12 @@ return {
             { "Q", "hide", mode = { "t", "n" } },
           },
         },
+        notification = {
+          wo = {
+            winblend = 0,
+            wrap = true,
+          },
+        },
       },
       explorer = {},
     },
@@ -224,7 +243,25 @@ return {
       },
       { "<leader>e", false },
       { "<leader>E", false },
+      { "<leader><space>", false },
+      {
+        "g<c-t>",
+        function()
+          require("snacks_tab_picker").tabs_picker()
+        end,
+      },
     },
+  },
+  {
+    "2kabhishek/seeker.nvim",
+    dependencies = { "folke/snacks.nvim" },
+    cmd = { "Seeker" },
+    keys = {
+      { "<leader><leader>ff", ":Seeker files<CR>", desc = "Seek Files" },
+      { "<leader><leader>fg", ":Seeker git_files<CR>", desc = "Seek Git Files" },
+      { "<leader><leader>sg", ":Seeker grep<CR>", desc = "Seek Grep" },
+    },
+    opts = {}, -- Required unless you call seeker.setup() manually, add your configs here
   },
   {
     "s1n7ax/nvim-window-picker",
@@ -257,12 +294,19 @@ return {
     "nvim-neo-tree/neo-tree.nvim",
     opts = {
       use_popups_for_input = false,
+      auto_clean_after_session_restore = true,
+      close_if_last_window = true,
       window = {
         mappings = {
           ["<C-s>"] = "split_with_window_picker",
           ["<C-v>"] = "vsplit_with_window_picker",
           ["<C-t>"] = "open_tabnew",
+          ["Y"] = "copy_selector",
+          ["/"] = false,
           ["z"] = false,
+          ["s"] = false,
+          ["S"] = false,
+          ["t"] = false,
         },
       },
       filesystem = {
@@ -270,8 +314,12 @@ return {
         filtered_items = {
           visible = true,
         },
+        follow_current_file = { enabled = true },
+        hijack_netrw_behavior = "open_current",
+        use_libuv_file_watcher = true,
       },
       default_component_configs = {
+        indent = { padding = 0 },
         name = {
           highlight_opened_files = true,
         },
@@ -279,9 +327,49 @@ return {
         type = { enabled = false },
         last_modified = { enabled = false },
       },
+      commands = {
+        -- REF: https://github.com/AstroNvim/AstroNvim/blob/6d5750bb4fbefeb816bf6d9d088df72dfefb9724/lua/plugins/neo-tree.lua#L73-L105
+        copy_selector = function(state)
+          local node = state.tree:get_node()
+          local filepath = node:get_id()
+          local filename = node.name
+          local modify = vim.fn.fnamemodify
+
+          local vals = {
+            ["BASENAME"] = modify(filename, ":r"),
+            ["EXTENSION"] = modify(filename, ":e"),
+            ["FILENAME"] = filename,
+            ["PATH (CWD)"] = modify(filepath, ":."),
+            ["PATH (HOME)"] = modify(filepath, ":~"),
+            ["PATH"] = filepath,
+            ["URI"] = vim.uri_from_fname(filepath),
+          }
+
+          local options = vim.tbl_filter(function(val)
+            return vals[val] ~= ""
+          end, vim.tbl_keys(vals))
+          if vim.tbl_isempty(options) then
+            vim.notify("No values to copy", vim.log.levels.WARN)
+            return
+          end
+          table.sort(options)
+          vim.ui.select(options, {
+            prompt = "Choose to copy to clipboard:",
+            format_item = function(item)
+              return ("%s: %s"):format(item, vals[item])
+            end,
+          }, function(choice)
+            local result = vals[choice]
+            if result then
+              vim.notify(("Copied: `%s`"):format(result))
+              vim.fn.setreg("+", result)
+            end
+          end)
+        end,
+      },
       event_handlers = {
         {
-          event = "neo_tree_window_after_open",
+          event = "neo_tree_buffer_enter",
           handler = function()
             vim.opt_local.foldcolumn = "0"
             vim.opt_local.foldmethod = "manual"
@@ -329,7 +417,7 @@ return {
       },
     },
     keys = {
-      { "<localleader>e", "<cmd>Oil<cr>", desc = "Oil" },
+      { "<c-->", "<cmd>Oil<cr>", desc = "Oil" },
     },
   },
   {
@@ -379,7 +467,7 @@ return {
       local set = vim.keymap.set
 
       -- Add a cursor for all matches of cursor word/selection in the document.
-      set({ "n", "x" }, "<localleader><localleader>A", mc.matchAllAddCursors)
+      set({ "n", "x" }, "<leader><leader>A", mc.matchAllAddCursors)
 
       -- Add or skip cursor above/below the main cursor.
       set({ "n", "x" }, "<m-up>", function()
@@ -424,7 +512,7 @@ return {
         layerSet({ "n", "x" }, "<left>", mc.prevCursor)
         layerSet({ "n", "x" }, "<right>", mc.nextCursor)
         -- Align cursor columns.
-        layerSet("n", "<localleader><localleader>a", mc.alignCursors)
+        layerSet("n", "<leader><leader>a", mc.alignCursors)
 
         -- Delete the main cursor.
         -- layerSet({ "n", "x" }, "<leader>mx", mc.deleteCursor)
@@ -471,9 +559,14 @@ return {
       { "<leader>gY", "<cmd>GitLink!<cr>", mode = { "n", "v" }, desc = "Open git link" },
     },
   },
-  {
+  --[[ {
     "rhysd/conflict-marker.vim",
     event = "VeryLazy",
+  }, ]]
+  {
+    "spacedentist/resolve.nvim",
+    event = { "BufReadPre", "BufNewFile" },
+    opts = {},
   },
   {
     "sindrets/diffview.nvim",
@@ -528,7 +621,7 @@ return {
         function()
           require("neogit").open()
         end,
-        desc = "[Neogit] - Open",
+        desc = "Neogit (cwd)",
       },
       {
         "<leader>gn",
@@ -537,7 +630,7 @@ return {
             require("neogit").open({ cwd = vim.b.gitsigns_status_dict.root })
           end
         end,
-        desc = "[Neogit] - Open Relative",
+        desc = "Neogit (Root Dir)",
       },
     },
   },
@@ -561,6 +654,7 @@ return {
         untracked = { text = "┆" },
       },
       numhl = true,
+      attach_to_untracked = true,
       on_attach = function(buffer)
         local gs = package.loaded.gitsigns
 
@@ -618,15 +712,16 @@ return {
             elseif choice == original_base then
               choice = nil
             end
-            require("gitsigns").change_base(choice, true)
+            require("gitsigns").change_base(choice)
           end)
         end,  "Change Base" )
         map({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<CR>", "GitSigns Select Hunk")
       end,
     },
   },
+  { "tpope/vim-fugitive" },
   {
-    "esmuellert/vscode-diff.nvim",
+    "esmuellert/codediff.nvim",
     cmd = { "CodeDiff" },
     dependencies = { "MunifTanjim/nui.nvim" },
     opts = {},
