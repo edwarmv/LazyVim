@@ -143,89 +143,96 @@ return {
   },
   {
     "folke/snacks.nvim",
-    opts = {
-      dashboard = {
-        enabled = false,
-        preset = {
-          header = false,
-        },
-      },
-      indent = {
-        indent = {
-          char = "▏",
-        },
-        scope = {
-          char = "▏",
-        },
-      },
-      statuscolumn = {
-        enabled = false,
-        folds = {
-          open = true,
-          git_hl = true,
-        },
-      },
-      picker = {
-        formatters = {
-          file = {
-            filename_first = true, -- display filename before the file path
+    opts = function()
+      local icons = vim.deepcopy(LazyVim.config.icons.kinds)
+
+      return {
+        dashboard = {
+          enabled = false,
+          preset = {
+            header = false,
           },
         },
-        win = {
-          input = {
+        indent = {
+          indent = {
+            char = "▏",
+          },
+          scope = {
+            char = "▏",
+          },
+        },
+        statuscolumn = {
+          enabled = false,
+          folds = {
+            open = true,
+            git_hl = true,
+          },
+        },
+        picker = {
+          formatters = {
+            file = {
+              filename_first = true, -- display filename before the file path
+            },
+          },
+          win = {
+            input = {
+              keys = {
+                ["<a-s>"] = { "flash", mode = { "n", "i" } },
+                ["s"] = { "flash" },
+              },
+            },
+          },
+          icons = {
+            kinds = icons,
+          },
+          actions = {
+            flash = function(picker)
+              require("flash").jump({
+                pattern = "^",
+                label = { after = { 0, 0 } },
+                search = {
+                  mode = "search",
+                  exclude = {
+                    function(win)
+                      return vim.bo[vim.api.nvim_win_get_buf(win)].filetype ~= "snacks_picker_list"
+                    end,
+                  },
+                },
+                action = function(match)
+                  local idx = picker.list:row2idx(match.pos[1])
+                  picker.list:_move(idx, true, true)
+                end,
+              })
+            end,
+          },
+        },
+        lazygit = {
+          config = {
+            os = {
+              edit = '[ -z "$NVIM" ] && (nvim -- {{filename}}) || (nvim --server "$NVIM" --remote-send "<CMD>q<CR>" && nvim --server "$NVIM" --remote {{filename}})',
+              editAtLine = '[ -z "$NVIM" ] && (nvim +{{line}} -- {{filename}}) || (nvim --server "$NVIM" --remote-send "<CMD>q<CR>" &&  nvim --server "$NVIM" --remote {{filename}} && nvim --server "$NVIM" --remote-send ":{{line}}<CR>")',
+              editAtLineAndWait = "nvim +{{line}} {{filename}}",
+              openDirInEditor = '[ -z "$NVIM" ] && (nvim -- {{dir}}) || (nvim --server "$NVIM" --remote-send "<CMD>q<CR>" && nvim --server "$NVIM" --remote {{dir}})',
+            },
+            promptToReturnFromSubprocess = false,
+          },
+        },
+        styles = {
+          lazygit = {
             keys = {
-              ["<a-s>"] = { "flash", mode = { "n", "i" } },
-              ["s"] = { "flash" },
+              { "Q", "hide", mode = { "t", "n" } },
+            },
+          },
+          notification = {
+            wo = {
+              winblend = 0,
+              wrap = true,
             },
           },
         },
-        actions = {
-          flash = function(picker)
-            require("flash").jump({
-              pattern = "^",
-              label = { after = { 0, 0 } },
-              search = {
-                mode = "search",
-                exclude = {
-                  function(win)
-                    return vim.bo[vim.api.nvim_win_get_buf(win)].filetype ~= "snacks_picker_list"
-                  end,
-                },
-              },
-              action = function(match)
-                local idx = picker.list:row2idx(match.pos[1])
-                picker.list:_move(idx, true, true)
-              end,
-            })
-          end,
-        },
-      },
-      lazygit = {
-        config = {
-          os = {
-            edit = '[ -z "$NVIM" ] && (nvim -- {{filename}}) || (nvim --server "$NVIM" --remote-send "<CMD>q<CR>" && nvim --server "$NVIM" --remote {{filename}})',
-            editAtLine = '[ -z "$NVIM" ] && (nvim +{{line}} -- {{filename}}) || (nvim --server "$NVIM" --remote-send "<CMD>q<CR>" &&  nvim --server "$NVIM" --remote {{filename}} && nvim --server "$NVIM" --remote-send ":{{line}}<CR>")',
-            editAtLineAndWait = "nvim +{{line}} {{filename}}",
-            openDirInEditor = '[ -z "$NVIM" ] && (nvim -- {{dir}}) || (nvim --server "$NVIM" --remote-send "<CMD>q<CR>" && nvim --server "$NVIM" --remote {{dir}})',
-          },
-          promptToReturnFromSubprocess = false,
-        },
-      },
-      styles = {
-        lazygit = {
-          keys = {
-            { "Q", "hide", mode = { "t", "n" } },
-          },
-        },
-        notification = {
-          wo = {
-            winblend = 0,
-            wrap = true,
-          },
-        },
-      },
-      explorer = {},
-    },
+        explorer = {},
+      }
+    end,
     keys = {
       {
         "<leader>fe",
@@ -253,6 +260,20 @@ return {
     },
   },
   {
+    "TKasperczyk/snacks-gallery.nvim",
+    dependencies = { "folke/snacks.nvim" },
+    opts = {},
+    keys = {
+      {
+        "<leader><leader>g",
+        function()
+          require("snacks-gallery").open()
+        end,
+        desc = "Gallery",
+      },
+    },
+  },
+  {
     "2kabhishek/seeker.nvim",
     dependencies = { "folke/snacks.nvim" },
     cmd = { "Seeker" },
@@ -260,6 +281,7 @@ return {
       { "<leader><leader>ff", ":Seeker files<CR>", desc = "Seek Files" },
       { "<leader><leader>fg", ":Seeker git_files<CR>", desc = "Seek Git Files" },
       { "<leader><leader>sg", ":Seeker grep<CR>", desc = "Seek Grep" },
+      { "<leader><leader>sw", ":Seeker grep_word<CR>", desc = "Seek Grep Word" },
     },
     opts = {}, -- Required unless you call seeker.setup() manually, add your configs here
   },
@@ -834,6 +856,18 @@ return {
         })
       end
       return keys
+    end,
+  },
+  {
+    "folke/trouble.nvim",
+    opts = function()
+      local icons = vim.deepcopy(LazyVim.config.icons.kinds)
+
+      return {
+        icons = {
+          kinds = icons,
+        },
+      }
     end,
   },
 }

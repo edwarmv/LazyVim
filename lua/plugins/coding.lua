@@ -53,88 +53,68 @@ return {
         opts = {},
       },
     },
-    opts = {
-      keymap = {
-        preset = "enter",
-        ["<C-y>"] = { "select_and_accept" },
-        ["<C-e>"] = { "cancel", "fallback" },
-      },
-      appearance = {
-        kind_icons = {
-          Text = "",
-          Method = "",
-          Function = "",
-          Constructor = "",
-          Field = "",
-          Variable = "",
-          Class = "",
-          Interface = "",
-          Module = "",
-          Property = "",
-          Unit = "",
-          Value = "",
-          Enum = "",
-          Keyword = "",
-          Snippet = "",
-          Color = "",
-          File = "",
-          Reference = "",
-          Folder = "",
-          EnumMember = "",
-          Constant = "",
-          Struct = "",
-          Event = "",
-          Operator = "",
-          TypeParameter = "",
+    opts = function()
+      local icons = vim.deepcopy(LazyVim.config.icons.kinds)
+
+      return {
+        keymap = {
+          preset = "enter",
+          ["<C-y>"] = { "select_and_accept" },
+          ["<C-e>"] = { "cancel", "fallback" },
         },
-      },
-      sources = {
-        providers = {
-          lsp = {
-            opts = { tailwind_color_icon = "" },
-            fallbacks = {},
-          },
-          snippets = {
-            opts = {
-              extended_filetypes = {
-                typescript = { "javascript" },
-                astro = { "javascript" },
+        appearance = {
+          kind_icons = vim.tbl_map(function(value)
+            return value:sub(1, -2)
+          end, icons),
+        },
+        sources = {
+          providers = {
+            lsp = {
+              opts = { tailwind_color_icon = "" },
+              fallbacks = {},
+            },
+            snippets = {
+              opts = {
+                extended_filetypes = {
+                  typescript = { "javascript" },
+                  astro = { "javascript" },
+                },
               },
             },
           },
         },
-      },
-      completion = {
-        list = {
-          selection = {
-            preselect = false,
-            auto_insert = true,
+        completion = {
+          list = {
+            selection = {
+              preselect = false,
+              auto_insert = true,
+            },
+          },
+          trigger = {
+            show_on_backspace = true,
+            show_on_backspace_in_keyword = true,
+          },
+          documentation = {
+            window = {
+              border = "padded",
+            },
+          },
+          menu = {
+            border = "none",
+            draw = {
+              padding = 1,
+            },
           },
         },
-        trigger = {
-          show_on_backspace = true,
-          show_on_backspace_in_keyword = true,
-        },
-        documentation = {
-          window = {
-            border = "padded",
+        fuzzy = {
+          sorts = {
+            "score",
+            "sort_text",
+            "label",
           },
         },
-        menu = {
-          border = "none",
-          draw = {
-            padding = 1,
-          },
-        },
-      },
-      fuzzy = {
-        sorts = {
-          "score",
-          "sort_text",
-          "label",
-        },
-      },
-    },
+      }
+    end,
   },
   {
     "nvim-mini/mini.pairs",
