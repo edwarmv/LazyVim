@@ -53,10 +53,10 @@ return {
         opts = {},
       },
     },
-    opts = function()
+    opts = function(_, opts)
       local icons = vim.deepcopy(LazyVim.config.icons.kinds)
 
-      return {
+      local my_opts = {
         keymap = {
           preset = "enter",
           ["<C-y>"] = { "select_and_accept" },
@@ -114,6 +114,8 @@ return {
           },
         },
       }
+
+      return vim.tbl_deep_extend("force", opts or {}, my_opts)
     end,
   },
   {

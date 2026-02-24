@@ -86,7 +86,7 @@ return {
         separator_style = "slant",
         show_close_icon = false,
         show_buffer_close_icons = false,
-        truncate_names = false,
+        truncate_names = true,
         numbers = "ordinal",
       },
     },

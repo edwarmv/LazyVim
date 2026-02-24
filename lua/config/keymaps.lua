@@ -19,20 +19,10 @@ Snacks.toggle.option("scrollbind", { name = "Scrollbind" }):map("<leader><leader
 -- save file
 vim.keymap.set({ "i", "x", "n", "s" }, "<c-s-s>", "<cmd>wa<cr><esc>", { desc = "Save All Files" })
 
--- Copy absolute path
-vim.keymap.set("n", "<leader>yp", function()
+vim.keymap.set("n", "<leader>y", function()
   vim.fn.setreg("+", vim.fn.expand("%:p"))
-end, { desc = "Yank absolute path to clipboard" })
-
--- Copy relative path
-vim.keymap.set("n", "<leader>yr", function()
-  vim.fn.setreg("+", vim.fn.expand("%:f"))
-end, { desc = "Yank relative path to clipboard" })
-
--- Copy filename
-vim.keymap.set("n", "<leader>yf", function()
-  vim.fn.setreg("+", vim.fn.expand("%:t"))
-end, { desc = "Yank filename to clipboard" })
+  require("copy_path").copy_path()
+end, { desc = "Yank path to clipboard" })
 
 vim.keymap.set("n", "<leader><tab>m", function()
   vim.ui.input({ prompt = "Enter The Tab Index: " }, function(tab_index)

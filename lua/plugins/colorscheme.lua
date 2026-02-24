@@ -1,4 +1,5 @@
 return {
+  -- { "xiyaowong/transparent.nvim" },
   {
     "rose-pine/neovim",
     name = "rose-pine",
@@ -74,7 +75,7 @@ return {
     "olimorris/onedarkpro.nvim",
     opts = {},
   }, ]]
-  {
+  --[[ {
     "sainnhe/gruvbox-material",
     init = function()
       vim.g.gruvbox_material_better_performance = 1
@@ -101,7 +102,7 @@ return {
         end,
       })
     end,
-  },
+  }, ]]
   --[[ {
     "sainnhe/everforest",
     init = function()
@@ -127,6 +128,9 @@ return {
   }, ]]
   --[[ {
     "zenbones-theme/zenbones.nvim",
+    init = function()
+      -- vim.g.zenbones_transparent_background = true
+    end,
     dependencies = "rktjmp/lush.nvim",
   }, ]]
 }
