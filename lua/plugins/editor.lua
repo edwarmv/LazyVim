@@ -391,22 +391,28 @@ return {
   },
   {
     "stevearc/oil.nvim",
-    init = function()
-      vim.api.nvim_create_autocmd("User", {
-        pattern = "OilActionsPost",
-        callback = function(event)
-          if event.data.actions[1].type == "move" then
-            Snacks.rename.on_rename_file(event.data.actions[1].src_url, event.data.actions[1].dest_url)
-          end
-        end,
-      })
-    end,
     dependencies = {
       "mini.icons",
     },
     opts = {
       view_options = {
         show_hidden = true,
+      },
+      lsp_file_methods = {
+        enabled = true,
+      },
+      keymaps = {
+        ["<C-v>"] = { "actions.select", opts = { vertical = true } },
+        ["<C-s>"] = { "actions.select", opts = { horizontal = true } },
+        ["<M-s>"] = {
+          callback = function()
+            return "<cmd>w<cr><esc>"
+          end,
+          desc = "Save changes",
+          expr = true,
+        },
+        ["<C-h>"] = false,
+        ["<C-t>"] = { "actions.select", opts = { tab = true } },
       },
     },
     keys = {
@@ -684,29 +690,10 @@ return {
         map("n", "<leader>ghd", gs.diffthis, "Diff This")
         map("n", "<leader>ghD", function() gs.diffthis("~") end, "Diff This ~")
         map("n", "<leader>ghc", function()
-          local root = LazyVim.root({ buf = buffer, normalize = true })
-
-          local result = vim
-            .system({ "git", "rev-parse", "--symbolic", "--branches", "--tags", "--remotes" }, { cwd = root })
-            :wait()
-
-          if result.code ~= 0 then
-            vim.notify("Git command failed: " .. result.stderr, vim.log.levels.ERROR)
-            return
-          end
-
-          local all = vim.split(result.stdout, "\n", { trimempty = true })
-          local original_base = "Original base"
-          table.insert(all, 1, original_base)
-
-          vim.ui.select(all, { prompt = "Select branch" }, function(choice)
-            if choice == nil then
-              return
-            elseif choice == original_base then
-              choice = nil
-            end
-            require("gitsigns").change_base(choice)
-          end)
+          require("git_utils").change_base(buffer, true)
+        end,  "Change Base Global" )
+        map("n", "<leader>ghC", function()
+          require("git_utils").change_base(buffer)
         end,  "Change Base" )
         map({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<CR>", "GitSigns Select Hunk")
       end,
