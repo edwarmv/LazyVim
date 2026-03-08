@@ -2,6 +2,7 @@ return {
   -- { "xiyaowong/transparent.nvim" },
   {
     "rose-pine/neovim",
+    lazy = true,
     name = "rose-pine",
     opts = {
       styles = {
@@ -34,15 +35,17 @@ return {
       },
     },
   },
-  --[[ {
+  {
     "scottmckendry/cyberdream.nvim",
+    lazy = true,
     opts = {
       variant = "auto",
       transparent = true,
     },
-  }, ]]
-  --[[ {
+  },
+  {
     "rebelot/kanagawa.nvim",
+    lazy = true,
     build = ":KanagawaCompile",
     opts = {
       compile = true,
@@ -61,22 +64,25 @@ return {
         }
       end,
     },
-  }, ]]
-  --[[ {
+  },
+  {
     "loctvl842/monokai-pro.nvim",
+    lazy = true,
     opts = {
       day_night = {
         enable = true,
         day_filter = "light",
       },
     },
-  }, ]]
-  --[[ {
+  },
+  {
     "olimorris/onedarkpro.nvim",
+    lazy = true,
     opts = {},
-  }, ]]
-  --[[ {
+  },
+  {
     "sainnhe/gruvbox-material",
+    lazy = true,
     init = function()
       vim.g.gruvbox_material_better_performance = 1
       vim.g.gruvbox_material_float_style = "dim"
@@ -102,9 +108,10 @@ return {
         end,
       })
     end,
-  }, ]]
-  --[[ {
+  },
+  {
     "sainnhe/everforest",
+    lazy = true,
     init = function()
       vim.g.everforest_enable_italic = true
       vim.g.everforest_dim_inactive_windows = true
@@ -125,12 +132,17 @@ return {
         end,
       })
     end,
-  }, ]]
-  --[[ {
+  },
+  {
     "zenbones-theme/zenbones.nvim",
+    lazy = true,
     init = function()
       -- vim.g.zenbones_transparent_background = true
     end,
     dependencies = "rktjmp/lush.nvim",
-  }, ]]
+  },
+  {
+    "marko-cerovac/material.nvim",
+    lazy = true,
+  },
 }
