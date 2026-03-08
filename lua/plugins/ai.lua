@@ -100,6 +100,9 @@ return {
     "folke/sidekick.nvim",
     optional = true,
     opts = {
+      nes = {
+        debounce = 500,
+      },
       cli = {
         mux = {
           backend = "tmux",
