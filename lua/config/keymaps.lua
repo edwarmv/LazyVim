@@ -1,23 +1,37 @@
 -- Keymaps are automatically loaded on the VeryLazy event
 -- Default keymaps that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
 -- Add any additional keymaps here
-vim.keymap.set("i", "<c-b>", "<left>")
-vim.keymap.set("i", "<c-f>", "<right>")
-vim.keymap.set("c", "<c-a>", "<c-b>")
-vim.keymap.set("i", "<c-l>", "<c-f>")
-vim.keymap.set("c", "<c-b>", "<left>")
-vim.keymap.set("c", "<c-f>", "<right>")
-vim.keymap.set("n", "<c-w><c-l>", "<c-l><cmd>nohl<cr><cmd>lua Snacks.notifier.hide()<cr>")
+vim.keymap.set("i", "<C-b>", "<left>")
+vim.keymap.set("i", "<C-f>", "<right>")
+vim.keymap.set("c", "<C-a>", "<c-b>")
+vim.keymap.set("i", "<C-S-f>", "<c-f>")
+vim.keymap.set("c", "<C-b>", "<left>")
+vim.keymap.set("c", "<C-f>", "<right>")
+vim.keymap.set("n", "<C-S-l>", "<c-l><cmd>nohl<cr><cmd>lua Snacks.notifier.hide()<cr>")
+vim.keymap.set("n", "ZR", function()
+  if vim.v.count < 1 then
+    return "<cmd>restart<cr>"
+  else
+    return "<cmd>restart +qall!<cr>"
+  end
+end, { desc = ":help ZR", expr = true })
 -- toggle options
 Snacks.toggle.option("scrollbind", { name = "Scrollbind" }):map("<leader><leader>us")
+Snacks.toggle.zoom():map("<S-esc>")
 
 -- floating terminal
 -- vim.keymap.set({ "n", "t" }, "<c-`>", function()
 --   Snacks.terminal()
 -- end, { desc = "Terminal (cwd)" })
 
+-- delete default snipet keymaps
+vim.keymap.del({ "i", "s" }, "<Tab>")
+vim.keymap.del({ "i", "s" }, "<S-Tab>")
+
 -- save file
-vim.keymap.set({ "i", "x", "n", "s" }, "<c-s-s>", "<cmd>wa<cr><esc>", { desc = "Save All Files" })
+vim.keymap.del({ "i", "x", "n", "s" }, "<C-s>")
+vim.keymap.set({ "i", "x", "n", "s" }, "<M-S-s>", "<cmd>wa<cr><esc>", { desc = "Save All Files" })
+vim.keymap.set({ "i", "x", "n", "s" }, "<M-s>", "<cmd>w<cr><esc>", { desc = "Save File" })
 
 vim.keymap.set("n", "<leader>y", function()
   vim.fn.setreg("+", vim.fn.expand("%:p"))
@@ -54,8 +68,8 @@ vim.keymap.set("n", "<leader><tab>D", function()
       bufs_set[buf] = true
     end
   end
-  for _, buf in ipairs(bufs) do
-    Snacks.bufdelete(buf)
-  end
   vim.cmd("tabclose")
+  for _, buf in ipairs(bufs) do
+    vim.api.nvim_buf_delete(buf, {})
+  end
 end, { desc = "Close Tab And Its Buffers" })
