@@ -44,15 +44,21 @@ return {
     end,
   },
   {
+    "saghen/blink.pairs",
+    enabled = false,
+    build = "cargo build --release",
+    event = "InsertEnter",
+    opts = {},
+  },
+  {
+    "windwp/nvim-autopairs",
+    enabled = true,
+    event = "InsertEnter",
+    opts = {},
+  },
+  {
     "saghen/blink.cmp",
     optional = true,
-    dependencies = {
-      {
-        "windwp/nvim-autopairs",
-        event = "InsertEnter",
-        opts = {},
-      },
-    },
     opts = function(_, opts)
       local icons = vim.deepcopy(LazyVim.config.icons.kinds)
 
@@ -61,6 +67,13 @@ return {
           preset = "enter",
           ["<C-y>"] = { "select_and_accept" },
           ["<C-e>"] = { "cancel", "fallback" },
+          ["<Tab>"] = {
+            LazyVim.cmp.map({ "ai_nes", "ai_accept" }),
+            "fallback",
+          },
+          ["<S-Tab>"] = false,
+          ["<C-h>"] = { "snippet_backward", "fallback" },
+          ["<C-l>"] = { "snippet_forward", "fallback" },
         },
         appearance = {
           kind_icons = vim.tbl_map(function(value)
@@ -94,7 +107,7 @@ return {
             show_on_backspace = true,
             show_on_backspace_in_keyword = true,
           },
-          documentation = {
+          --[[ documentation = {
             window = {
               border = "padded",
             },
@@ -104,7 +117,7 @@ return {
             draw = {
               padding = 1,
             },
-          },
+          }, ]]
         },
         fuzzy = {
           sorts = {
@@ -193,6 +206,7 @@ return {
     },
     opts = {
       ring = {
+        history_length = 1000,
         storage = vim.g.vscode and "shada" or "sqlite",
       },
     },
@@ -201,9 +215,16 @@ return {
     "numToStr/Comment.nvim",
     dependencies = {
       "JoosepAlviste/nvim-ts-context-commentstring",
+      opts = {
+        languages = {
+          less = { __default = "// %s", __multiline = "/* %s */" },
+        },
+      },
     },
-    event = "VeryLazy",
     opts = function()
+      local ft = require("Comment.ft")
+      ft.set("htmlangular", { "<!-- %s -->", "<!-- %s -->" })
+
       return {
         pre_hook = require("ts_context_commentstring.integrations.comment_nvim").create_pre_hook(),
       }
@@ -212,5 +233,27 @@ return {
   {
     "folke/ts-comments.nvim",
     enabled = false,
+  },
+  {
+    "Wansmer/treesj",
+    keys = {
+      {
+        "gS",
+        function()
+          require("treesj").split()
+        end,
+        desc = "Split code block",
+      },
+      {
+        "gJ",
+        function()
+          require("treesj").join()
+        end,
+        desc = "Join code block",
+      },
+    },
+    opts = {
+      use_default_keymaps = false,
+    },
   },
 }
