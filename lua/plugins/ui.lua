@@ -61,8 +61,8 @@ return {
   },
   {
     "nvim-lualine/lualine.nvim",
-    enabled = true,
     opts = function(_, opts)
+      local icons = LazyVim.config.icons
       opts.sections.lualine_b[1] = {
         "branch",
         fmt = function(value)
@@ -74,10 +74,99 @@ return {
         end,
       }
       table.insert(opts.extensions, "toggleterm")
+      opts.sections.lualine_c[1] = "" -- Disable root dir
+      opts.sections.lualine_c[2] = "" -- Disable diagnostics
+      opts.sections.lualine_c[3] = "" -- Disable filetype
+      opts.sections.lualine_c[4] = "" -- Disable filename
+      opts.sections.lualine_x[8] = "" -- Disable diff
+      table.insert(opts.sections.lualine_y, 1, { "filetype" })
+      local function macro()
+        local reg = vim.fn.reg_recording()
+        if reg ~= "" then
+          return "Recording @" .. reg
+        end
+        return ""
+      end
+      table.insert(opts.sections.lualine_x, 2, {
+        macro,
+        color = function()
+          return { fg = Snacks.util.color("Statement") }
+        end,
+      })
+      table.insert(opts.sections.lualine_x, 3, "searchcount")
+      table.insert(opts.sections.lualine_x, 4, "selectioncount")
+
+      opts.options.always_show_tabline = false
+      opts.tabline = {
+        lualine_a = { { "tabs", mode = 2, max_length = vim.o.columns } },
+      }
+
+      opts.options.disabled_filetypes.winbar = {
+        "",
+        "dap-view",
+        "dap-repl",
+        "snacks_layout_box",
+        "qf",
+        "neo-tree",
+        "toggleterm",
+        "snacks_dashboard",
+        "snacks_terminal",
+        "sidekick_terminal",
+        "aerial",
+      }
+      local winbar_config = {
+        lualine_c = {
+          LazyVim.lualine.root_dir(),
+          {
+            "filetype",
+            icon_only = true,
+            padding = { left = 1, right = 0 },
+            separator = "",
+          },
+          {
+            LazyVim.lualine.pretty_path({ filename_hl = "LualineFilename", modified_hl = "LualineModifiedFilename" }),
+            padding = { left = 0, right = 1 },
+            separator = "",
+          },
+          {
+            "diff",
+            padding = { left = 0, right = 1 },
+            separator = "",
+            symbols = {
+              added = icons.git.added,
+              modified = icons.git.modified,
+              removed = icons.git.removed,
+            },
+            source = function()
+              local gitsigns = vim.b.gitsigns_status_dict
+              if gitsigns then
+                return {
+                  added = gitsigns.added,
+                  modified = gitsigns.changed,
+                  removed = gitsigns.removed,
+                }
+              end
+            end,
+          },
+          {
+            "diagnostics",
+            padding = { left = 0, right = 1 },
+            symbols = {
+              error = icons.diagnostics.Error,
+              warn = icons.diagnostics.Warn,
+              info = icons.diagnostics.Info,
+              hint = icons.diagnostics.Hint,
+            },
+          },
+        },
+      }
+      opts.winbar = winbar_config
+      opts.inactive_winbar = winbar_config
     end,
   },
   {
     "akinsho/bufferline.nvim",
+    enabled = false,
     optional = true,
     opts = {
       options = {
@@ -105,7 +194,11 @@ return {
   },
   {
     "folke/noice.nvim",
+    enabled = false,
     opts = {
+      cmdline = {
+        view = "cmdline",
+      },
       lsp = {
         override = {
           ["vim.lsp.util.convert_input_to_markdown_lines"] = false,
@@ -120,9 +213,6 @@ return {
           enabled = false,
         },
       },
-      presets = {
-        command_palette = false,
-      },
       views = {
         popupmenu = {
           border = {
@@ -131,7 +221,7 @@ return {
           },
         },
       },
-      routes = {
+      --[[ routes = {
         {
           filter = {
             event = "msg_show",
@@ -144,7 +234,32 @@ return {
           },
           view = "mini",
         },
+      }, ]]
+    },
+  },
+  {
+    "j-hui/fidget.nvim",
+    opts = {},
+  },
+  {
+    "kosayoda/nvim-lightbulb",
+    enabled = false,
+    opts = {
+      code_lenses = true,
+      sign = {
+        enabled = false,
       },
+      virtual_text = {
+        enabled = false,
+      },
+      float = {
+        enabled = true,
+        win_opts = {
+          border = "none",
+          winblend = 100,
+        },
+      },
+      autocmd = { enabled = true },
     },
   },
   {
@@ -166,6 +281,7 @@ return {
   },
   {
     "b0o/incline.nvim",
+    enabled = false,
     dependencies = {
       "nvim-mini/mini.icons",
     },
@@ -191,9 +307,6 @@ return {
             " ",
           }
         end,
-        hide = {
-          focused_win = false,
-        },
         highlight = {
           groups = {
             InclineNormal = "StatusLine",
