@@ -1,6 +1,7 @@
 return {
   {
     "olimorris/codecompanion.nvim",
+    version = "*",
     cmd = {
       "CodeCompanion",
       "CodeCompanionChat",
@@ -24,7 +25,7 @@ return {
             },
           },
           inline = {
-            adapter = "gemini",
+            adapter = "copilot",
           },
         },
         adapters = {

@@ -74,6 +74,11 @@ return {
       },
     },
     opts = {
+      diagnostics = {
+        virtual_text = {
+          current_line = true,
+        },
+      },
       inlay_hints = {
         enabled = false,
       },
@@ -91,12 +96,12 @@ return {
               false,
             },
             {
-              "<c-k>",
+              "<C-k>",
               mode = { "i" },
               false,
             },
             {
-              "<m-s>",
+              "<C-s>",
               function()
                 return vim.lsp.buf.signature_help()
               end,

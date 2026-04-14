@@ -1,6 +1,7 @@
 return {
   {
     "LazyVim/LazyVim",
+    version = false,
     opts = {
       colorscheme = "rose-pine",
       icons = {
