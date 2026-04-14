@@ -1,69 +1,5 @@
 return {
   {
-    "mrjones2014/smart-splits.nvim",
-    opts = {
-      cursor_follows_swapped_bufs = true,
-    },
-    keys = {
-      {
-        "<C-h>",
-        function()
-          require("smart-splits").move_cursor_left()
-        end,
-        desc = "Move Cursor Left",
-      },
-      {
-        "<C-j>",
-        function()
-          require("smart-splits").move_cursor_down()
-        end,
-        desc = "Move Cursor Down",
-      },
-      {
-        "<C-k>",
-        function()
-          require("smart-splits").move_cursor_up()
-        end,
-        desc = "Move Cursor Up",
-      },
-      {
-        "<C-l>",
-        function()
-          require("smart-splits").move_cursor_right()
-        end,
-        desc = "Move Cursor Right",
-      },
-      {
-        "<leader><leader>h",
-        function()
-          require("smart-splits").swap_buf_left()
-        end,
-        desc = "Swap Buf Left",
-      },
-      {
-        "<leader><leader>j",
-        function()
-          require("smart-splits").swap_buf_down()
-        end,
-        desc = "Swap Buf Down",
-      },
-      {
-        "<leader><leader>k",
-        function()
-          require("smart-splits").swap_buf_up()
-        end,
-        desc = "Swap Buf Up",
-      },
-      {
-        "<leader><leader>l",
-        function()
-          require("smart-splits").swap_buf_right()
-        end,
-        desc = "Swap Buf Right",
-      },
-    },
-  },
-  {
     "stevearc/aerial.nvim",
     optional = true,
     keys = {
@@ -98,15 +34,6 @@ return {
   {
     "folke/flash.nvim",
     keys = {
-      { "S", mode = { "n", "o", "x" }, false },
-      {
-        "Z",
-        mode = { "n", "o", "x" },
-        function()
-          require("flash").treesitter()
-        end,
-        desc = "Flash Treesitter",
-      },
       {
         "<m-.>",
         mode = { "n", "x", "o" },
@@ -222,6 +149,14 @@ return {
             keys = {
               { "Q", "hide", mode = { "t", "n" } },
             },
+            wo = {
+              winhighlight = "NormalFloat:Normal",
+            },
+          },
+          terminal = {
+            wo = {
+              winhighlight = "NormalFloat:Normal",
+            },
           },
           notification = {
             wo = {
@@ -258,6 +193,14 @@ return {
         function()
           require("snacks_tab_picker").tabs_picker()
         end,
+      },
+      {
+        mode = { "n", "t" },
+        "<c-`>",
+        function()
+          Snacks.terminal()
+        end,
+        desc = "Terminal (cwd)",
       },
     },
   },
@@ -404,13 +347,6 @@ return {
       keymaps = {
         ["<C-v>"] = { "actions.select", opts = { vertical = true } },
         ["<C-s>"] = { "actions.select", opts = { horizontal = true } },
-        ["<M-s>"] = {
-          callback = function()
-            return "<cmd>w<cr><esc>"
-          end,
-          desc = "Save changes",
-          expr = true,
-        },
         ["<C-h>"] = false,
         ["<C-t>"] = { "actions.select", opts = { tab = true } },
       },
@@ -568,12 +504,133 @@ return {
     opts = {},
   },
   {
-    "sindrets/diffview.nvim",
-    opts = {},
-    cmd = { "DiffviewOpen" },
+    "dlyongemallo/diffview.nvim",
+    opts = function()
+      local actions = require("diffview.actions")
+
+      return {
+        enhanced_diff_hl = true,
+        clean_up_buffers = true,
+        file_panel = {
+          win_config = {
+            -- width = "auto",
+            win_opts = {
+              signcolumn = "no",
+            },
+          },
+        },
+        keymaps = {
+          view = {
+            ["<leader>co"] = false,
+            ["<leader>ct"] = false,
+            ["<leader>cb"] = false,
+            ["<leader>ca"] = false,
+            ["<leader>cO"] = false,
+            ["<leader>cT"] = false,
+            ["<leader>cB"] = false,
+            ["<leader>cA"] = false,
+            {
+              "n",
+              "<localleader>co",
+              actions.conflict_choose("ours"),
+              { desc = "Choose the OURS version of a conflict" },
+            },
+            {
+              "n",
+              "<localleader>ct",
+              actions.conflict_choose("theirs"),
+              { desc = "Choose the THEIRS version of a conflict" },
+            },
+            {
+              "n",
+              "<localleader>cb",
+              actions.conflict_choose("base"),
+              { desc = "Choose the BASE version of a conflict" },
+            },
+            {
+              "n",
+              "<localleader>ca",
+              actions.conflict_choose("all"),
+              { desc = "Choose all the versions of a conflict" },
+            },
+            {
+              "n",
+              "<localleader>cO",
+              actions.conflict_choose_all("ours"),
+              { desc = "Choose the OURS version of a conflict for the whole file" },
+            },
+            {
+              "n",
+              "<localleader>cT",
+              actions.conflict_choose_all("theirs"),
+              { desc = "Choose the THEIRS version of a conflict for the whole file" },
+            },
+            {
+              "n",
+              "<localleader>cB",
+              actions.conflict_choose_all("base"),
+              { desc = "Choose the BASE version of a conflict for the whole file" },
+            },
+            {
+              "n",
+              "<localleader>cA",
+              actions.conflict_choose_all("all"),
+              { desc = "Choose all the versions of a conflict for the whole file" },
+            },
+          },
+          file_panel = {
+            ["<space>"] = false,
+            {
+              { "n", "x" },
+              "<S-CR>",
+              actions.toggle_select_entry,
+              { desc = "Toggle file selection for multi-file operations" },
+            },
+            ["<leader>cO"] = false,
+            ["<leader>cT"] = false,
+            ["<leader>cB"] = false,
+            ["<leader>cA"] = false,
+            {
+              "n",
+              "<localleader>cO",
+              actions.conflict_choose_all("ours"),
+              { desc = "Choose the OURS version of a conflict for the whole file" },
+            },
+            {
+              "n",
+              "<localleader>cT",
+              actions.conflict_choose_all("theirs"),
+              { desc = "Choose the THEIRS version of a conflict for the whole file" },
+            },
+            {
+              "n",
+              "<localleader>cB",
+              actions.conflict_choose_all("base"),
+              { desc = "Choose the BASE version of a conflict for the whole file" },
+            },
+            {
+              "n",
+              "<localleader>cA",
+              actions.conflict_choose_all("all"),
+              { desc = "Choose all the versions of a conflict for the whole file" },
+            },
+          },
+        },
+      }
+    end,
+    cmd = {
+      "DiffviewOpen",
+      "DiffviewFileHistory",
+      "DiffviewClose",
+      "DiffviewToggle",
+      "DiffviewToggleFiles",
+      "DiffviewFocusFiles",
+      "DiffviewRefresh",
+      "DiffviewLog",
+    },
     keys = {
       {
-        "<leader>gdO",
+        "<leader><leader>dO",
         function()
           local diffview = require("diffview")
           local all = vim.fn.systemlist({ "git", "rev-parse", "--symbolic", "--branches", "--tags", "--remotes" })
@@ -590,20 +647,27 @@ return {
             diffview.open({ choice })
           end)
         end,
-        desc = "Diffview - Open",
+        desc = "Diffview - Open Against a Branch",
       },
-      { "<leader>gdo", "<cmd>DiffviewOpen<cr>", desc = "Diffview - Open" },
-      { "<leader>gdq", "<cmd>DiffviewClose<cr>", desc = "Diffview - Close" },
-      { "<leader>gdH", "<cmd>DiffviewFileHistory<cr>", desc = "Diffview - File History" },
-      { "<leader>gdh", "<cmd>DiffviewFileHistory %<cr>", desc = "Diffview - File History Current File" },
+      { "<leader><leader>do", "<cmd>DiffviewOpen<cr>", desc = "Diffview - Open" },
+      { "<leader><leader>dq", "<cmd>DiffviewClose<cr>", desc = "Diffview - Close" },
+      { "<leader><leader>dH", "<cmd>DiffviewFileHistory<cr>", desc = "Diffview - File History" },
+      {
+        mode = { "n", "x" },
+        "<leader><leader>dh",
+        ":DiffviewFileHistory %<cr>",
+        desc = "Diffview - File History Current File",
+      },
+      { "<leader><leader>dr", "<cmd>DiffviewRefresh<cr>", desc = "Diffview - Refresh" },
     },
   },
   {
     "NeogitOrg/neogit",
     dependencies = {
       "nvim-lua/plenary.nvim", -- required
-      "sindrets/diffview.nvim",
-      "lewis6991/gitsigns.nvim",
+      -- "esmuellert/codediff.nvim",
+      "diffview.nvim",
+      "folke/snacks.nvim",
     },
     opts = {
       disable_signs = false,
@@ -651,6 +715,10 @@ return {
         topdelete = { text = "‾" },
         changedelete = { text = "~" },
         untracked = { text = "┆" },
+      },
+      preview_config = {
+        row = 1,
+        col = 0,
       },
       numhl = true,
       attach_to_untracked = true,
@@ -702,9 +770,17 @@ return {
   { "tpope/vim-fugitive" },
   {
     "esmuellert/codediff.nvim",
-    cmd = { "CodeDiff" },
+    enabled = false,
+    cmd = { "CodeDiff", "VscodeDiff" },
     dependencies = { "MunifTanjim/nui.nvim" },
     opts = {},
+    keys = {
+      {
+        "<leader><leader>d",
+        ":VscodeDiff",
+        desc = "CodeDiff",
+      },
+    },
   },
   {
     "michaelb/sniprun",
@@ -748,7 +824,8 @@ return {
       return {
         open_mode = function(escaped_target_path, line_arg, col_arg)
           if vim.bo.buftype == "terminal" then
-            vim.cmd("ToggleTerm")
+            -- vim.cmd("ToggleTerm")
+            Snacks.terminal.toggle()
           end
           local open_cmd = "edit"
           vim.cmd(open_cmd .. " " .. escaped_target_path)
