@@ -1,10 +1,38 @@
 return {
   -- { "xiyaowong/transparent.nvim" },
   {
+    "folke/tokyonight.nvim",
+    lazy = true,
+    opts = {
+      style = "moon",
+      dim_inactive = true,
+      lualine_bold = true,
+      on_highlights = function(hl, c)
+        local util = require("tokyonight.util")
+
+        hl.ExtraWhitespace = {
+          fg = c.red,
+          bg = util.blend(c.red, 0.15, c.bg),
+        }
+        hl.ResolveOursMarker = { link = "DiffAdd" }
+        hl.ResolveTheirsMarker = { link = "DiffChange" }
+        hl.ResolveSeparatorMarker = { link = "NonText" }
+        hl.ResolveAncestorMarker = { link = "DiffText" }
+        hl.ResolveOursSection = { link = "DiffAdd" }
+        hl.ResolveTheirsSection = { link = "DiffChange" }
+        hl.ResolveAncestorSection = { link = "DiffText" }
+      end,
+    },
+  },
+  {
     "rose-pine/neovim",
     lazy = true,
     name = "rose-pine",
     opts = {
+      enable = {
+        legacy_highlights = false,
+        migrations = false,
+      },
       styles = {
         transparency = false,
       },
@@ -29,11 +57,55 @@ return {
         ResolveOursSection = { link = "DiffAdd" },
         ResolveTheirsSection = { link = "DiffChange" },
         ResolveAncestorSection = { link = "DiffText" },
-      },
-      groups = {
-        git_change = "gold",
+        LualineModifiedFilename = { fg = "pine", italic = true, bold = true },
+        LualineFilename = { fg = "text", bold = true },
+        SidekickDiffAdd = { link = "DiffAdd" },
+        SidekickDiffContext = { bg = "surface" },
       },
     },
+  },
+  {
+    "catppuccin/nvim",
+    lazy = true,
+    name = "catppuccin",
+    opts = function()
+      local U = require("catppuccin.utils.colors")
+
+      return {
+        term_colors = true,
+        dim_inactive = {
+          enabled = true,
+        },
+        auto_integrations = true,
+        lsp_styles = {
+          underlines = {
+            errors = { "undercurl" },
+            hints = { "undercurl" },
+            warnings = { "undercurl" },
+            information = { "undercurl" },
+          },
+        },
+        custom_highlights = function(C)
+          return {
+            ExtraWhitespace = { fg = C.red, bg = U.darken(C.red, 0.15, C.base) },
+            ResolveOursMarker = { link = "DiffAdd" },
+            ResolveTheirsMarker = { link = "DiffChange" },
+            ResolveSeparatorMarker = { link = "NonText" },
+            ResolveAncestorMarker = { link = "DiffText" },
+            ResolveOursSection = { link = "DiffAdd" },
+            ResolveTheirsSection = { link = "DiffChange" },
+            ResolveAncestorSection = { link = "DiffText" },
+          }
+        end,
+        highlight_overrides = {
+          latte = function(C)
+            return {
+              CursorLine = { bg = U.lighten(C.surface0, 0.7, C.base) },
+            }
+          end,
+        },
+      }
+    end,
   },
   {
     "scottmckendry/cyberdream.nvim",
@@ -84,8 +156,16 @@ return {
     "sainnhe/gruvbox-material",
     lazy = true,
     init = function()
-      vim.g.gruvbox_material_better_performance = 1
-      vim.g.gruvbox_material_float_style = "dim"
+      -- vim.g.gruvbox_material_better_performance = 1
+      -- vim.g.gruvbox_material_float_style = "dim"
+      vim.g.gruvbox_material_disable_terminal_colors = 1
+      vim.g.gruvbox_material_dim_inactive_windows = 1
+      vim.g.gruvbox_material_enable_italic = 1
+      vim.g.gruvbox_material_enable_bold = 1
+      vim.g.gruvbox_material_inlay_hints_background = 1
+      vim.g.gruvbox_material_diagnostic_line_highlight = 1
+      vim.g.gruvbox_material_diagnostic_text_highlight = 1
+      vim.g.gruvbox_material_diagnostic_virtual_text = "colored"
 
       vim.api.nvim_create_autocmd("ColorScheme", {
         group = vim.api.nvim_create_augroup("custom_highlights_gruvboxmaterial", {}),
@@ -97,6 +177,7 @@ return {
           local set_hl = vim.fn["gruvbox_material#highlight"]
 
           set_hl("ExtraWhitespace", palette.red, palette.bg_visual_red)
+          set_hl("NonText", palette.grey0, palette.none)
 
           vim.api.nvim_set_hl(0, "ResolveOursMarker", { link = "DiffAdd" })
           vim.api.nvim_set_hl(0, "ResolveTheirsMarker", { link = "DiffChange" })
@@ -134,15 +215,33 @@ return {
     end,
   },
   {
-    "zenbones-theme/zenbones.nvim",
+    "marko-cerovac/material.nvim",
     lazy = true,
-    init = function()
-      -- vim.g.zenbones_transparent_background = true
-    end,
-    dependencies = "rktjmp/lush.nvim",
   },
   {
-    "marko-cerovac/material.nvim",
+    "everviolet/nvim",
+    name = "evergarden",
+    lazy = true,
+    opts = {
+      theme = {
+        variant = "fall", -- 'winter'|'fall'|'spring'|'summer'
+        accent = "green",
+      },
+      editor = {
+        transparent_background = false,
+        sign = { color = "none" },
+        float = {
+          color = "mantle",
+          solid_border = false,
+        },
+        completion = {
+          color = "surface0",
+        },
+      },
+    },
+  },
+  {
+    "webhooked/kanso.nvim",
     lazy = true,
   },
 }
