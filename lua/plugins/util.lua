@@ -1,6 +1,7 @@
 return {
   {
     "akinsho/toggleterm.nvim",
+    enabled = false,
     cmd = { "TTerm", "VTerm", "STerm", "FTerm" },
     opts = function()
       vim.api.nvim_create_user_command("FTerm", function(opts)
@@ -75,7 +76,7 @@ return {
     keys = {
       {
         mode = { "n", "t" },
-        "<c-`>",
+        "<c-/>",
         function()
           local count = vim.v.count
           local root = LazyVim.root()
@@ -85,12 +86,47 @@ return {
       },
       {
         mode = { "n", "t" },
-        "<c-s-`>",
+        "<c-s-/>",
+        function()
+          local count = vim.v.count
+          local root = LazyVim.root()
+          vim.cmd(count .. "ToggleTerm direction=float dir=" .. root)
+        end,
+        desc = "ToggleTerm (root dir)",
+      },
+      {
+        mode = { "n", "t" },
+        "<c-`>",
         function()
           local count = vim.v.count
           vim.fn.execute(count .. "ToggleTerm")
         end,
         desc = "ToggleTerm (cwd)",
+      },
+      {
+        mode = { "n", "t" },
+        "<c-s-`>",
+        function()
+          local count = vim.v.count
+          vim.fn.execute(count .. "ToggleTerm direction=float")
+        end,
+        desc = "ToggleTerm (cwd)",
+      },
+    },
+  },
+  {
+    "mistricky/codesnap.nvim",
+    cmd = { "CodeSnap", "CodeSnapSave" },
+    opts = {
+      snapshot_config = {
+        window = {
+          mac_window_bar = false,
+          margin = {
+            x = 12,
+            y = 12,
+          },
+        },
+        watermark = { content = "" },
       },
     },
   },
