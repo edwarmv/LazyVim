@@ -34,6 +34,15 @@ return {
   {
     "folke/flash.nvim",
     keys = {
+      { "S", mode = { "n", "o", "x" }, false },
+      {
+        "gs",
+        mode = { "n", "o", "x" },
+        function()
+          require("flash").treesitter()
+        end,
+        desc = "Flash Treesitter",
+      },
       {
         "<m-.>",
         mode = { "n", "x", "o" },
@@ -283,7 +292,7 @@ return {
         },
         follow_current_file = { enabled = true },
         hijack_netrw_behavior = "open_current",
-        use_libuv_file_watcher = true,
+        use_libuv_file_watcher = false,
       },
       default_component_configs = {
         indent = { padding = 0 },

@@ -106,8 +106,9 @@ return {
           trigger = {
             show_on_backspace = true,
             show_on_backspace_in_keyword = true,
+            show_on_insert = true,
           },
-          --[[ documentation = {
+          documentation = {
             window = {
               border = "padded",
             },
@@ -117,7 +118,7 @@ return {
             draw = {
               padding = 1,
             },
-          }, ]]
+          },
         },
         fuzzy = {
           sorts = {
