@@ -58,7 +58,13 @@ return {
   },
   {
     "saghen/blink.cmp",
+    dependencies = {
+      "saghen/blink.lib",
+    },
     optional = true,
+    build = function()
+      require("blink.cmp").build():wait(60000)
+    end,
     opts = function(_, opts)
       local icons = vim.deepcopy(LazyVim.config.icons.kinds)
 
@@ -213,7 +219,7 @@ return {
     },
   },
   {
-    "numToStr/Comment.nvim",
+    "bchmnn/Comment.nvim",
     dependencies = {
       "JoosepAlviste/nvim-ts-context-commentstring",
       opts = {
