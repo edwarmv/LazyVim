@@ -8,16 +8,9 @@ vim.keymap.set("i", "<C-S-f>", "<c-f>")
 vim.keymap.set("c", "<C-b>", "<left>")
 vim.keymap.set("c", "<C-f>", "<right>")
 vim.keymap.set("n", "<C-S-l>", "<c-l><cmd>nohl<cr><cmd>lua Snacks.notifier.hide()<cr>")
-vim.keymap.set("n", "ZR", function()
-  if vim.v.count < 1 then
-    return "<cmd>restart<cr>"
-  else
-    return "<cmd>restart +qall!<cr>"
-  end
-end, { desc = ":help ZR", expr = true })
 -- toggle options
 Snacks.toggle.option("scrollbind", { name = "Scrollbind" }):map("<leader><leader>us")
-Snacks.toggle.zoom():map("<S-esc>")
+Snacks.toggle.zoom():map("<S-esc>", { mode = { "n", "i", "x", "t" } })
 
 -- floating terminal
 -- vim.keymap.set({ "n", "t" }, "<c-`>", function()
