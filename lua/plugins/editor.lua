@@ -1,4 +1,70 @@
+local user_preferences = require("user_preferences")
+
 return {
+  {
+    "mrjones2014/smart-splits.nvim",
+    opts = {
+      cursor_follows_swapped_bufs = true,
+    },
+    keys = {
+      {
+        "<C-h>",
+        function()
+          require("smart-splits").move_cursor_left()
+        end,
+        desc = "Move Cursor Left",
+      },
+      {
+        "<C-j>",
+        function()
+          require("smart-splits").move_cursor_down()
+        end,
+        desc = "Move Cursor Down",
+      },
+      {
+        "<C-k>",
+        function()
+          require("smart-splits").move_cursor_up()
+        end,
+        desc = "Move Cursor Up",
+      },
+      {
+        "<C-l>",
+        function()
+          require("smart-splits").move_cursor_right()
+        end,
+        desc = "Move Cursor Right",
+      },
+      {
+        "<leader><leader>h",
+        function()
+          require("smart-splits").swap_buf_left()
+        end,
+        desc = "Swap Buf Left",
+      },
+      {
+        "<leader><leader>j",
+        function()
+          require("smart-splits").swap_buf_down()
+        end,
+        desc = "Swap Buf Down",
+      },
+      {
+        "<leader><leader>k",
+        function()
+          require("smart-splits").swap_buf_up()
+        end,
+        desc = "Swap Buf Up",
+      },
+      {
+        "<leader><leader>l",
+        function()
+          require("smart-splits").swap_buf_right()
+        end,
+        desc = "Swap Buf Right",
+      },
+    },
+  },
   {
     "stevearc/aerial.nvim",
     optional = true,
@@ -14,6 +80,13 @@ return {
   },
   {
     "folke/which-key.nvim",
+    opts = {
+      delay = function(ctx)
+        -- Set the delay to the timeoutlen to avoid conflicts with the
+        -- comment.nvim keymaps
+        return ctx.plugin and 0 or vim.o.timeoutlen
+      end,
+    },
     keys = {
       {
         "z<space>",
@@ -84,7 +157,6 @@ return {
 
       local my_opts = {
         dashboard = {
-          enabled = false,
           preset = {
             header = false,
           },
@@ -292,7 +364,6 @@ return {
         },
         follow_current_file = { enabled = true },
         hijack_netrw_behavior = "open_current",
-        use_libuv_file_watcher = false,
       },
       default_component_configs = {
         indent = { padding = 0 },
@@ -522,7 +593,7 @@ return {
         clean_up_buffers = true,
         file_panel = {
           win_config = {
-            -- width = "auto",
+            width = "auto",
             win_opts = {
               signcolumn = "no",
             },
@@ -679,11 +750,11 @@ return {
       "folke/snacks.nvim",
     },
     opts = {
-      disable_signs = false,
+      disable_signs = true,
       signs = {
-        hunk = { "▶", "▼" },
-        item = { "▶", "▼" },
-        section = { "▶", "▼" },
+        hunk = { user_preferences.icons.foldclose, user_preferences.icons.foldopen },
+        item = { user_preferences.icons.foldclose, user_preferences.icons.foldopen },
+        section = { user_preferences.icons.foldclose, user_preferences.icons.foldopen },
       },
       graph_style = "unicode",
     },
