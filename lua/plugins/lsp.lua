@@ -1,3 +1,4 @@
+local user_preferences = require("user_preferences")
 local function resizeGotoPreview()
   require("goto-preview").setup({
     width = math.floor(vim.o.columns / 2),
@@ -40,8 +41,8 @@ return {
               return true
             end,
             folds = {
-              fold_closed = "▶",
-              fold_open = "▼",
+              fold_closed = user_preferences.icons.foldclose,
+              fold_open = user_preferences.icons.foldopen,
             },
             indent_lines = {
               enable = false,

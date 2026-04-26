@@ -80,7 +80,7 @@ return {
       opts.sections.lualine_c[4] = "" -- Disable filename
       opts.sections.lualine_x[8] = "" -- Disable diff
       table.insert(opts.sections.lualine_y, 1, { "filetype" })
-      local function macro()
+      --[[ local function macro()
         local reg = vim.fn.reg_recording()
         if reg ~= "" then
           return "Recording @" .. reg
@@ -94,7 +94,7 @@ return {
         end,
       })
       table.insert(opts.sections.lualine_x, 3, "searchcount")
-      table.insert(opts.sections.lualine_x, 4, "selectioncount")
+      table.insert(opts.sections.lualine_x, 4, "selectioncount") ]]
 
       opts.options.always_show_tabline = false
       opts.tabline = {
@@ -194,11 +194,7 @@ return {
   },
   {
     "folke/noice.nvim",
-    enabled = false,
     opts = {
-      cmdline = {
-        view = "cmdline",
-      },
       lsp = {
         override = {
           ["vim.lsp.util.convert_input_to_markdown_lines"] = false,
@@ -221,24 +217,11 @@ return {
           },
         },
       },
-      --[[ routes = {
-        {
-          filter = {
-            event = "msg_show",
-            any = {
-              { kind = "lua_error" },
-              { find = "%d+L, %d+B" },
-              { find = "; after #%d+" },
-              { find = "; before #%d+" },
-            },
-          },
-          view = "mini",
-        },
-      }, ]]
     },
   },
   {
     "j-hui/fidget.nvim",
+    enabled = false,
     opts = {},
   },
   {
