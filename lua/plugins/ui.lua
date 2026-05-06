@@ -1,65 +1,5 @@
 return {
   {
-    "stevearc/quicker.nvim",
-    enabled = false,
-    ft = "qf",
-    opts = {
-      keys = {
-        {
-          ">",
-          function()
-            require("quicker").expand({ before = 2, after = 2, add_to_existing = true })
-          end,
-          desc = "Expand quickfix context",
-        },
-        {
-          "<",
-          function()
-            require("quicker").collapse()
-          end,
-          desc = "Collapse quickfix context",
-        },
-      },
-    },
-  },
-  {
-    "kevinhwang91/nvim-bqf",
-    dependencies = {
-      "junegunn/fzf",
-      version = "*",
-      build = "./install --bin",
-    },
-    enabled = true,
-    ft = "qf",
-    opts = {
-      auto_enable = true,
-      auto_resize_height = true,
-      delay_syntax = 80,
-      preview = {
-        border = vim.o.winborder,
-        winblend = 0,
-        should_preview_cb = function(bufnr, qwinid)
-          local ret = true
-          local bufname = vim.api.nvim_buf_get_name(bufnr)
-          local fsize = vim.fn.getfsize(bufname)
-          if fsize > 100 * 1024 then
-            -- skip file size greater than 100k
-            ret = false
-          elseif bufname:match("^fugitive://") then
-            -- skip fugitive buffer
-            ret = false
-          end
-          return ret
-        end,
-      },
-      filter = {
-        fzf = {
-          extra_opts = { "--bind", "ctrl-o:toggle-all", "--delimiter", "│" },
-        },
-      },
-    },
-  },
-  {
     "nvim-lualine/lualine.nvim",
     opts = function(_, opts)
       local icons = LazyVim.config.icons
@@ -80,29 +20,21 @@ return {
       opts.sections.lualine_c[4] = "" -- Disable filename
       opts.sections.lualine_x[8] = "" -- Disable diff
       table.insert(opts.sections.lualine_y, 1, { "filetype" })
-      --[[ local function macro()
-        local reg = vim.fn.reg_recording()
-        if reg ~= "" then
-          return "Recording @" .. reg
-        end
-        return ""
-      end
-      table.insert(opts.sections.lualine_x, 2, {
-        macro,
-        color = function()
-          return { fg = Snacks.util.color("Statement") }
-        end,
-      })
-      table.insert(opts.sections.lualine_x, 3, "searchcount")
-      table.insert(opts.sections.lualine_x, 4, "selectioncount") ]]
 
       opts.options.always_show_tabline = false
       opts.tabline = {
-        lualine_a = { { "tabs", mode = 2, max_length = vim.o.columns } },
+        lualine_a = {
+          {
+            "tabs",
+            mode = 2,
+            max_length = function()
+              return vim.o.columns
+            end,
+          },
+        },
       }
 
       opts.options.disabled_filetypes.winbar = {
-        "",
         "dap-view",
         "dap-repl",
         "snacks_layout_box",
@@ -121,6 +53,16 @@ return {
             "filetype",
             icon_only = true,
             padding = { left = 1, right = 0 },
+            separator = "",
+          },
+          { -- Fallback for when no icon is available
+            function()
+              return " "
+            end,
+            cond = function()
+              return vim.bo.filetype == ""
+            end,
+            padding = 0,
             separator = "",
           },
           {
@@ -220,32 +162,6 @@ return {
     },
   },
   {
-    "j-hui/fidget.nvim",
-    enabled = false,
-    opts = {},
-  },
-  {
-    "kosayoda/nvim-lightbulb",
-    enabled = false,
-    opts = {
-      code_lenses = true,
-      sign = {
-        enabled = false,
-      },
-      virtual_text = {
-        enabled = false,
-      },
-      float = {
-        enabled = true,
-        win_opts = {
-          border = "none",
-          winblend = 100,
-        },
-      },
-      autocmd = { enabled = true },
-    },
-  },
-  {
     "ntpeters/vim-better-whitespace",
     event = "VimEnter",
     init = function()
@@ -255,49 +171,30 @@ return {
     end,
   },
   {
-    "Bekaboo/deadcolumn.nvim",
-    event = "VeryLazy",
-    init = function()
-      vim.opt.colorcolumn = "80"
+    "whatyouhide/vim-lengthmatters",
+    cmd = {
+      "LengthmattersToggle",
+      "LengthmattersEnable",
+      "LengthmattersDisable",
+      "LengthmattersReload",
+      "LengthmattersEnableAll",
+      "LengthmattersDisableAll",
+    },
+    keys = {
+      { "<leader><leader>ul", "<cmd>LengthmattersToggle<cr>", desc = "Toggle Lengthmatters" },
+      { "<leader><leader>uL", "<cmd>LengthmattersReload<cr>", desc = "Reload Lengthmatters" },
+    },
+    config = function()
+      vim.g.lengthmatters_on_by_default = 0
+      vim.g.lengthmatters_highlight_one_column = 0
+      vim.fn["lengthmatters#highlight_link_to"]("ColorColumn")
     end,
-    opts = {},
   },
   {
-    "b0o/incline.nvim",
-    enabled = false,
-    dependencies = {
-      "nvim-mini/mini.icons",
+    "hankertrix/nerd_column.nvim",
+    event = "BufEnter",
+    opts = {
+      scope = "window",
     },
-    opts = function()
-      return {
-        window = {
-          padding = 0,
-          margin = { horizontal = 0 },
-          zindex = 35,
-        },
-        render = function(props)
-          local filename = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(props.buf), ":t")
-          if filename == "" then
-            filename = "[No Name]"
-          end
-          local ft_icon, ft_color = MiniIcons.get("file", filename)
-          local modified = vim.bo[props.buf].modified
-
-          return {
-            ft_icon and { " ", ft_icon, group = props.focused and ft_color or "StatusLineNC" } or "",
-            " ",
-            { filename, gui = modified and "italic" or "" },
-            " ",
-          }
-        end,
-        highlight = {
-          groups = {
-            InclineNormal = "StatusLine",
-            InclineNormalNC = "StatusLineNC",
-          },
-        },
-      }
-    end,
-    event = "VeryLazy",
   },
 }

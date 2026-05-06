@@ -1,7 +1,6 @@
 return {
   {
     "akinsho/toggleterm.nvim",
-    enabled = false,
     cmd = { "TTerm", "VTerm", "STerm", "FTerm" },
     opts = function()
       vim.api.nvim_create_user_command("FTerm", function(opts)
@@ -34,17 +33,6 @@ return {
         vim.keymap.set("t", "<C-j>", [[<Cmd>wincmd j<CR>]], opts)
         vim.keymap.set("t", "<C-k>", [[<Cmd>wincmd k<CR>]], opts)
         vim.keymap.set("t", "<C-l>", [[<Cmd>wincmd l<CR>]], opts)
-        vim.keymap.set("x", "gf", function()
-          local f = vim.fn.findfile(vim.fn.expand("<cfile>"), "**")
-          if f == "" then
-            Snacks.notify.warn("No file under cursor")
-          else
-            vim.cmd("ToggleTerm")
-            vim.schedule(function()
-              vim.cmd("e " .. f)
-            end)
-          end
-        end, opts)
       end
 
       vim.cmd("autocmd! TermOpen term://*toggleterm#* lua set_terminal_keymaps()")
@@ -86,29 +74,10 @@ return {
       },
       {
         mode = { "n", "t" },
-        "<c-s-/>",
-        function()
-          local count = vim.v.count
-          local root = LazyVim.root()
-          vim.cmd(count .. "ToggleTerm direction=float dir=" .. root)
-        end,
-        desc = "ToggleTerm (root dir)",
-      },
-      {
-        mode = { "n", "t" },
         "<c-`>",
         function()
           local count = vim.v.count
           vim.fn.execute(count .. "ToggleTerm")
-        end,
-        desc = "ToggleTerm (cwd)",
-      },
-      {
-        mode = { "n", "t" },
-        "<c-s-`>",
-        function()
-          local count = vim.v.count
-          vim.fn.execute(count .. "ToggleTerm direction=float")
         end,
         desc = "ToggleTerm (cwd)",
       },

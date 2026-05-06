@@ -111,11 +111,10 @@ return {
               has = "signatureHelp",
             },
             { "gr", false },
-
             {
               "grr",
               function()
-                Snacks.picker.lsp_references()
+                Snacks.picker.lsp_references({ include_current = true })
               end,
               desc = "References",
             },

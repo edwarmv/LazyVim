@@ -11,11 +11,7 @@ vim.keymap.set("n", "<C-S-l>", "<c-l><cmd>nohl<cr><cmd>lua Snacks.notifier.hide(
 -- toggle options
 Snacks.toggle.option("scrollbind", { name = "Scrollbind" }):map("<leader><leader>us")
 Snacks.toggle.zoom():map("<S-esc>", { mode = { "n", "i", "x", "t" } })
-
--- floating terminal
--- vim.keymap.set({ "n", "t" }, "<c-`>", function()
---   Snacks.terminal()
--- end, { desc = "Terminal (cwd)" })
+Snacks.toggle.zoom():map("<S-esc>", { mode = { "n", "i", "x", "t" } })
 
 -- delete default snipet keymaps
 vim.keymap.del({ "i", "s" }, "<Tab>")

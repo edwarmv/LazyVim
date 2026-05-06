@@ -5,6 +5,7 @@ vim.g.lazyvim_blink_main = true
 vim.g.ai_cmp = false
 vim.g.snacks_animate = false
 vim.g.trouble_lualine = true
+vim.g.lazyvim_ts_lsp = "tsgo"
 
 local user_preferences = require("user_preferences")
 
@@ -16,7 +17,6 @@ opt.wrap = true
 opt.linebreak = true -- Wrap lines at 'breakat' (if 'wrap' is set)
 opt.breakindent = true -- Indent wrapped lines to match line start
 opt.breakindentopt = "list:-1" -- Add padding for lists (if 'wrap' is set)
--- opt.statuscolumn = ""
 opt.relativenumber = false
 opt.cursorcolumn = true
 opt.fillchars = {
@@ -45,7 +45,3 @@ opt.guicursor = table.concat({
 }, ",")
 
 vim.cmd("packadd nvim.undotree")
-
--- if not vim.g.vscode then
---   require("vim._core.ui2").enable()
--- end

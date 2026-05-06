@@ -29,13 +29,6 @@ return {
     lazy = true,
     name = "rose-pine",
     opts = {
-      enable = {
-        legacy_highlights = false,
-        migrations = false,
-      },
-      styles = {
-        transparency = false,
-      },
       dim_inactive_windows = true,
       highlight_groups = {
         ExtraWhitespace = { fg = "love", bg = "love", blend = 20 },
@@ -156,8 +149,7 @@ return {
     "sainnhe/gruvbox-material",
     lazy = true,
     init = function()
-      -- vim.g.gruvbox_material_better_performance = 1
-      -- vim.g.gruvbox_material_float_style = "dim"
+      vim.g.gruvbox_material_float_style = "blend"
       vim.g.gruvbox_material_disable_terminal_colors = 1
       vim.g.gruvbox_material_dim_inactive_windows = 1
       vim.g.gruvbox_material_enable_italic = 1
@@ -166,6 +158,7 @@ return {
       vim.g.gruvbox_material_diagnostic_line_highlight = 1
       vim.g.gruvbox_material_diagnostic_text_highlight = 1
       vim.g.gruvbox_material_diagnostic_virtual_text = "colored"
+      vim.g.gruvbox_material_ui_contrast = "high"
 
       vim.api.nvim_create_autocmd("ColorScheme", {
         group = vim.api.nvim_create_augroup("custom_highlights_gruvboxmaterial", {}),
@@ -177,8 +170,8 @@ return {
           local set_hl = vim.fn["gruvbox_material#highlight"]
 
           set_hl("ExtraWhitespace", palette.red, palette.bg_visual_red)
-          set_hl("NonText", palette.grey0, palette.none)
-
+          set_hl("LuasnipInsertNodePassive", palette.none, palette.bg3)
+          set_hl("LuasnipChoiceNodePassive", palette.none, palette.bg3)
           vim.api.nvim_set_hl(0, "ResolveOursMarker", { link = "DiffAdd" })
           vim.api.nvim_set_hl(0, "ResolveTheirsMarker", { link = "DiffChange" })
           vim.api.nvim_set_hl(0, "ResolveSeparatorMarker", { link = "NonText" })

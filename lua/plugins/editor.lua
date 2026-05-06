@@ -169,13 +169,6 @@ return {
             char = "▏",
           },
         },
-        statuscolumn = {
-          enabled = false,
-          folds = {
-            open = true,
-            git_hl = true,
-          },
-        },
         picker = {
           formatters = {
             file = {
@@ -226,6 +219,16 @@ return {
           },
         },
         styles = {
+          minimal = {
+            wo = {
+              -- To keep consistent fold characters with snacks statuscolumn
+              fillchars = string.format(
+                "eob: ,lastline:…,foldopen:%s,foldclose:%s",
+                user_preferences.icons.foldopen,
+                user_preferences.icons.foldclose
+              ),
+            },
+          },
           lazygit = {
             keys = {
               { "Q", "hide", mode = { "t", "n" } },
@@ -237,6 +240,9 @@ return {
           terminal = {
             wo = {
               winhighlight = "NormalFloat:Normal",
+            },
+            keys = {
+              gf = false,
             },
           },
           notification = {
@@ -275,14 +281,14 @@ return {
           require("snacks_tab_picker").tabs_picker()
         end,
       },
-      {
+      --[[ {
         mode = { "n", "t" },
         "<c-`>",
         function()
           Snacks.terminal()
         end,
         desc = "Terminal (cwd)",
-      },
+      }, ]]
     },
   },
   {
@@ -757,6 +763,7 @@ return {
         section = { user_preferences.icons.foldclose, user_preferences.icons.foldopen },
       },
       graph_style = "unicode",
+      process_spinner = true,
     },
     keys = {
       {
@@ -847,7 +854,12 @@ return {
       end,
     },
   },
-  { "tpope/vim-fugitive" },
+  {
+    "tpope/vim-fugitive",
+    init = function()
+      vim.g.fugitive_legacy_commands = false
+    end,
+  },
   {
     "esmuellert/codediff.nvim",
     enabled = false,
@@ -894,48 +906,8 @@ return {
   },
   {
     "HawkinsT/pathfinder.nvim",
-    opts = function()
-      local function goto_line_column(window, line_arg, col_arg)
-        local target_line = math.max(1, line_arg)
-        local target_col = (col_arg and col_arg > 0) and (col_arg - 1) or 0
-        pcall(vim.api.nvim_win_set_cursor, window, { target_line, target_col })
-      end
-
-      return {
-        open_mode = function(escaped_target_path, line_arg, col_arg)
-          if vim.bo.buftype == "terminal" then
-            -- vim.cmd("ToggleTerm")
-            Snacks.terminal.toggle()
-          end
-          local open_cmd = "edit"
-          vim.cmd(open_cmd .. " " .. escaped_target_path)
-          -- For commands like :edit, set cursor on the current window (0).
-          if line_arg then
-            goto_line_column(0, line_arg, col_arg)
-          end
-        end,
-        remap_default_keys = false,
-      }
-    end,
-    keys = {
-      {
-        "gf",
-        function()
-          require("pathfinder").gf()
-        end,
-      },
-      {
-        "gF",
-        function()
-          require("pathfinder").gF()
-        end,
-      },
-      {
-        "gx",
-        function()
-          require("pathfinder").gx()
-        end,
-      },
+    opts = {
+      open_mode = "split",
     },
   },
   {
