@@ -3,7 +3,7 @@ return {
     "LazyVim/LazyVim",
     version = false,
     opts = {
-      colorscheme = "gruvbox-material",
+      colorscheme = "rose-pine",
       icons = {
         kinds = {
           Text = " ",
