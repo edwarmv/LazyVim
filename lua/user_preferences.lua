@@ -1,7 +1,7 @@
 local M = {
   icons = {
-    foldopen = "",
-    foldclose = "",
+    foldopen = "▼",
+    foldclose = "▶",
   },
 }
 
