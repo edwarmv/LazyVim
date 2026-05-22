@@ -31,7 +31,7 @@ return {
   {
     "charlesnicholson/plantuml.nvim",
     dependencies = {
-      "nvim-treesitter",
+      "ts-install.nvim",
       opts = {
         ensure_installed = {
           "plantuml",
