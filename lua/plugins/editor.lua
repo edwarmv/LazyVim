@@ -157,6 +157,7 @@ return {
 
       local my_opts = {
         dashboard = {
+          enabled = false,
           preset = {
             header = false,
           },
@@ -580,12 +581,14 @@ return {
       { "<leader>gY", "<cmd>GitLink!<cr>", mode = { "n", "v" }, desc = "Open git link" },
     },
   },
-  --[[ {
+  {
     "rhysd/conflict-marker.vim",
+    enabled = false,
     event = "VeryLazy",
-  }, ]]
+  },
   {
     "spacedentist/resolve.nvim",
+    enabled = false,
     event = { "BufReadPre", "BufNewFile" },
     opts = {},
   },
@@ -594,16 +597,54 @@ return {
     opts = function()
       local actions = require("diffview.actions")
 
+      local function toggle_file_panel_width()
+        local view = require("diffview.lib").get_current_view()
+        if not (view and view.panel) then
+          return
+        end
+
+        local panel = view.panel
+        local width = panel:get_config().width == "auto" and math.max(1, math.floor(vim.o.columns / 3)) or "auto"
+
+        panel._base_config_producer = panel._base_config_producer or panel.config_producer
+        local base_config_producer = panel._base_config_producer
+
+        if vim.is_callable(base_config_producer) then
+          panel.config_producer = function()
+            local conf = base_config_producer()
+            if type(conf) ~= "table" then
+              conf = {}
+            end
+            conf.width = width
+            return conf
+          end
+        elseif type(base_config_producer) == "table" then
+          panel.config_producer = vim.tbl_deep_extend("force", vim.deepcopy(base_config_producer), { width = width })
+        else
+          panel.config_producer = { width = width }
+        end
+
+        panel:render()
+        panel:redraw()
+        panel:resize()
+      end
+
       return {
         enhanced_diff_hl = true,
+        diffopt = { algorithm = "histogram" },
+        persist_selections = { enabled = true },
         clean_up_buffers = true,
         file_panel = {
-          win_config = {
-            width = "auto",
-            win_opts = {
-              signcolumn = "no",
-            },
-          },
+          show_branch_name = true,
+          always_show_sections = true,
+          win_config = function()
+            return {
+              width = math.max(1, math.floor(vim.o.columns / 3)),
+              win_opts = {
+                signcolumn = "no",
+              },
+            }
+          end,
         },
         keymaps = {
           view = {
@@ -667,8 +708,14 @@ return {
           file_panel = {
             ["<space>"] = false,
             {
+              "n",
+              "e",
+              toggle_file_panel_width,
+              { desc = "Toggle file panel width" },
+            },
+            {
               { "n", "x" },
-              "<S-CR>",
+              "<S-space>",
               actions.toggle_select_entry,
               { desc = "Toggle file selection for multi-file operations" },
             },
@@ -700,6 +747,11 @@ return {
               actions.conflict_choose_all("all"),
               { desc = "Choose all the versions of a conflict for the whole file" },
             },
+          },
+        },
+        view = {
+          merge_tool = {
+            disable_diagnostics = false,
           },
         },
       }
@@ -736,7 +788,6 @@ return {
         desc = "Diffview - Open Against a Branch",
       },
       { "<leader><leader>do", "<cmd>DiffviewOpen<cr>", desc = "Diffview - Open" },
-      { "<leader><leader>dq", "<cmd>DiffviewClose<cr>", desc = "Diffview - Close" },
       { "<leader><leader>dH", "<cmd>DiffviewFileHistory<cr>", desc = "Diffview - File History" },
       {
         mode = { "n", "x" },
@@ -756,14 +807,13 @@ return {
       "folke/snacks.nvim",
     },
     opts = {
-      disable_signs = true,
+      disable_signs = false,
       signs = {
         hunk = { user_preferences.icons.foldclose, user_preferences.icons.foldopen },
         item = { user_preferences.icons.foldclose, user_preferences.icons.foldopen },
         section = { user_preferences.icons.foldclose, user_preferences.icons.foldopen },
       },
       graph_style = "unicode",
-      process_spinner = true,
     },
     keys = {
       {
@@ -781,6 +831,52 @@ return {
           end
         end,
         desc = "Neogit (Root Dir)",
+      },
+      {
+        "<leader>g<C-n>",
+        function()
+          local cwd = vim.fn.getcwd(-1, -1)
+          local root = vim.system({ "git", "rev-parse", "--show-toplevel" }, { cwd = cwd }):wait()
+
+          if root.code ~= 0 then
+            vim.notify("Unable to find git root for current cwd", vim.log.levels.ERROR)
+            return
+          end
+
+          local repo_root = vim.trim(root.stdout)
+          local submodule_result = vim
+            .system({ "git", "submodule", "status", "--recursive" }, { cwd = repo_root })
+            :wait()
+
+          if submodule_result.code ~= 0 then
+            vim.notify("Failed to read git submodules", vim.log.levels.ERROR)
+            return
+          end
+
+          local submodules = {}
+          for _, line in ipairs(vim.split(submodule_result.stdout, "\n", { trimempty = true })) do
+            local path = vim.trim(line):match("^%S+%s+([^%s]+)")
+            if path then
+              table.insert(submodules, path)
+            end
+          end
+
+          if vim.tbl_isempty(submodules) then
+            vim.notify("No git submodules found", vim.log.levels.INFO)
+            return
+          end
+
+          table.sort(submodules)
+
+          vim.ui.select(submodules, { prompt = "Select submodule" }, function(choice)
+            if choice == nil then
+              return
+            end
+
+            require("neogit").open({ cwd = vim.fs.joinpath(repo_root, choice) })
+          end)
+        end,
+        desc = "Neogit (Select Submodule)",
       },
     },
   },
@@ -908,21 +1004,58 @@ return {
     "HawkinsT/pathfinder.nvim",
     opts = {
       open_mode = "split",
+      remap_default_keys = false,
+    },
+    keys = {
+      {
+        "gf",
+        function()
+          require("pathfinder").gf()
+        end,
+        desc = "Go to file",
+        remap = true,
+      },
+      {
+        "gF",
+        function()
+          require("pathfinder").gF()
+        end,
+        desc = "Go to file (line)",
+        remap = true,
+      },
+      {
+        "gx",
+        function()
+          require("pathfinder").gx()
+        end,
+        desc = "Open with system app",
+        remap = true,
+      },
     },
   },
   {
     "ThePrimeagen/harpoon",
+    opts = function(_, opts)
+      local harpoon_extensions = require("harpoon.extensions")
+      local harpoon = require("harpoon")
+      harpoon:extend(harpoon_extensions.builtins.highlight_current_file())
+      harpoon:extend(harpoon_extensions.builtins.navigate_with_number())
+
+      return opts
+    end,
     keys = function()
       local keys = {
         {
-          "gH",
+          "<leader>H",
           function()
             require("harpoon"):list():add()
+            local filename = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(0), ":t")
+            vim.notify(string.format("Added %s to Harpoon", filename))
           end,
           desc = "Harpoon File",
         },
         {
-          "gh",
+          "<leader>h",
           function()
             local harpoon = require("harpoon")
             harpoon.ui:toggle_quick_menu(harpoon:list(), {

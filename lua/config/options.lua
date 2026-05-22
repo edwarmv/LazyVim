@@ -2,10 +2,12 @@
 -- Default options that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/options.lua
 -- Add any additional options here
 vim.g.lazyvim_blink_main = true
-vim.g.ai_cmp = false
 vim.g.snacks_animate = false
-vim.g.trouble_lualine = true
+vim.g.trouble_lualine = false
 vim.g.lazyvim_ts_lsp = "tsgo"
+vim.g.use_noice = false
+vim.g.use_bufferline = false
+vim.g.use_incline = false
 
 local user_preferences = require("user_preferences")
 
@@ -19,6 +21,7 @@ opt.breakindent = true -- Indent wrapped lines to match line start
 opt.breakindentopt = "list:-1" -- Add padding for lists (if 'wrap' is set)
 opt.relativenumber = false
 opt.cursorcolumn = true
+opt.statuscolumn = ""
 opt.fillchars = {
   foldopen = user_preferences.icons.foldopen,
   foldclose = user_preferences.icons.foldclose,
@@ -26,7 +29,7 @@ opt.fillchars = {
   foldsep = " ",
   foldinner = " ",
   diff = "╱",
-  eob = " ",
+  eob = "·",
 }
 opt.listchars = {
   trail = "·",
@@ -45,3 +48,7 @@ opt.guicursor = table.concat({
 }, ",")
 
 vim.cmd("packadd nvim.undotree")
+
+if not vim.g.vscode and not vim.g.use_noice then
+  require("vim._core.ui2").enable()
+end

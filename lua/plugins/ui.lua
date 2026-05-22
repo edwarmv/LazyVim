@@ -14,25 +14,46 @@ return {
         end,
       }
       table.insert(opts.extensions, "toggleterm")
-      opts.sections.lualine_c[1] = "" -- Disable root dir
-      opts.sections.lualine_c[2] = "" -- Disable diagnostics
-      opts.sections.lualine_c[3] = "" -- Disable filetype
-      opts.sections.lualine_c[4] = "" -- Disable filename
-      opts.sections.lualine_x[8] = "" -- Disable diff
+      if not vim.g.use_incline then
+        opts.sections.lualine_c[1] = "" -- Disable root dir
+        opts.sections.lualine_c[2] = "" -- Disable diagnostics
+        opts.sections.lualine_c[3] = "" -- Disable filetype
+        opts.sections.lualine_c[4] = "" -- Disable filename
+        opts.sections.lualine_x[8] = "" -- Disable diff
+      end
       table.insert(opts.sections.lualine_y, 1, { "filetype" })
+      if not vim.g.use_noice then
+        local function macro()
+          local reg = vim.fn.reg_recording()
+          if reg ~= "" then
+            return "Recording @" .. reg
+          end
+          return ""
+        end
+        table.insert(opts.sections.lualine_x, 2, {
+          macro,
+          color = function()
+            return { fg = Snacks.util.color("Statement") }
+          end,
+        })
+        table.insert(opts.sections.lualine_x, 3, "searchcount")
+        table.insert(opts.sections.lualine_x, 4, "selectioncount")
+      end
 
-      opts.options.always_show_tabline = false
-      opts.tabline = {
-        lualine_a = {
-          {
-            "tabs",
-            mode = 2,
-            max_length = function()
-              return vim.o.columns
-            end,
+      if not vim.g.use_bufferline then
+        opts.options.always_show_tabline = false
+        opts.tabline = {
+          lualine_a = {
+            {
+              "tabs",
+              mode = 2,
+              max_length = function()
+                return vim.o.columns
+              end,
+            },
           },
-        },
-      }
+        }
+      end
 
       opts.options.disabled_filetypes.winbar = {
         "dap-view",
@@ -102,47 +123,50 @@ return {
           },
         },
       }
-      opts.winbar = winbar_config
-      opts.inactive_winbar = winbar_config
+
+      if not vim.g.use_incline then
+        opts.winbar = winbar_config
+        opts.inactive_winbar = winbar_config
+      end
     end,
   },
   {
     "akinsho/bufferline.nvim",
-    enabled = false,
-    optional = true,
+    enabled = vim.g.use_bufferline,
+    init = function()
+      vim.api.nvim_create_autocmd("User", {
+        group = vim.api.nvim_create_augroup("EdwarFixBufferlineForPinnedBuffer", { clear = true }),
+        pattern = "UserDefinedBeforeSessionSave",
+        callback = function()
+          if vim.fn.exists("g:BufferlinePinnedBuffers") then
+            if #vim.g["BufferlinePinnedBuffers"] == 0 then
+              vim.cmd("unlet g:BufferlinePinnedBuffers")
+            end
+          end
+        end,
+      })
+    end,
     opts = {
       options = {
-        mode = "tabs",
-        always_show_bufferline = false,
         separator_style = "slant",
         show_close_icon = false,
         show_buffer_close_icons = false,
-        truncate_names = true,
+        truncate_names = false,
         numbers = "ordinal",
       },
     },
     keys = {
-      { "<leader>bp", "<CMD>BufferLinePickClose<CR>", desc = "Pick Tab to Close" },
+      { "<leader>bp", "<cmd>BufferLinePick<cr>", desc = "Pick Buffer" },
       { "<leader>bP", false },
-      { "<leader>br", false },
-      { "<leader>bl", false },
-      { "<S-h>", false },
-      { "<S-l>", false },
-      { "[b", false },
-      { "]b", false },
-      { "[B", false },
-      { "]B", false },
+      { "<leader>bj", false },
+      { "<leader>bc", "<CMD>BufferLinePickClose<CR>", desc = "Pick Tab to Close" },
     },
   },
   {
     "folke/noice.nvim",
+    enabled = vim.g.use_noice,
     opts = {
       lsp = {
-        override = {
-          ["vim.lsp.util.convert_input_to_markdown_lines"] = false,
-          ["vim.lsp.util.stylize_markdown"] = false,
-          ["cmp.entry.get_documentation"] = false,
-        },
         hover = {
           enabled = false,
           silent = true,
@@ -162,11 +186,16 @@ return {
     },
   },
   {
+    "j-hui/fidget.nvim",
+    enabled = not vim.g.use_noice,
+    opts = {},
+  },
+  {
     "ntpeters/vim-better-whitespace",
     event = "VimEnter",
     init = function()
       vim.g.better_whitespace_enabled = 1
-      vim.g.better_whitespace_operator = "<leader><leader>s"
+      vim.g.better_whitespace_operator = "<C-S-s>"
       vim.g.better_whitespace_filetypes_blacklist = { "dbout", "dashboard", "alpha", "snacks_dashboard" }
     end,
   },
@@ -195,6 +224,61 @@ return {
     event = "BufEnter",
     opts = {
       scope = "window",
+    },
+  },
+  {
+    "b0o/incline.nvim",
+    enabled = vim.g.use_incline,
+    dependencies = {
+      "nvim-mini/mini.icons",
+    },
+    opts = function()
+      return {
+        window = {
+          padding = 0,
+          margin = { horizontal = 0 },
+          zindex = 35,
+        },
+        render = function(props)
+          local filename = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(props.buf), ":t")
+          if filename == "" then
+            filename = "[No Name]"
+          end
+          local ft_icon, ft_color = MiniIcons.get("file", filename)
+          local modified = vim.bo[props.buf].modified
+
+          return {
+            ft_icon and { " ", ft_icon, group = props.focused and ft_color or "StatusLineNC" } or "",
+            " ",
+            { filename, gui = modified and "italic" or "" },
+            " ",
+          }
+        end,
+        highlight = {
+          groups = {
+            InclineNormal = "StatusLine",
+            InclineNormalNC = "StatusLineNC",
+          },
+        },
+      }
+    end,
+    event = "VeryLazy",
+  },
+  {
+    {
+      "rachartier/tiny-inline-diagnostic.nvim",
+      event = "VeryLazy",
+      priority = 1000,
+      opts = {
+        preset = "simple",
+        options = {
+          use_icons_from_diagnostic = true,
+        },
+      },
+    },
+    {
+      "neovim/nvim-lspconfig",
+      opts = { diagnostics = { virtual_text = false } },
     },
   },
 }

@@ -27,16 +27,8 @@ return {
       local my_opts = {
         keymap = {
           preset = "enter",
-          ["<C-y>"] = { "select_and_accept" },
           ["<C-e>"] = { "cancel", "fallback" },
-          ["<Tab>"] = {
-            LazyVim.cmp.map({ "ai_nes", "ai_accept" }),
-            "fallback",
-          },
-          ["<S-Tab>"] = false,
-          ["<C-h>"] = { "snippet_backward", "fallback" },
-          ["<C-l>"] = { "snippet_forward", "fallback" },
-          ["<C-S-space>"] = {
+          ["<S-space>"] = {
             function(cmp)
               cmp.show({ providers = { "lsp" } })
             end,
@@ -78,23 +70,11 @@ return {
             show_on_backspace_in_keyword = true,
             show_on_insert = true,
           },
-          documentation = {
-            window = {
-              border = "padded",
-            },
-          },
           menu = {
             border = "none",
             draw = {
               padding = 1,
             },
-          },
-        },
-        fuzzy = {
-          sorts = {
-            "score",
-            "sort_text",
-            "label",
           },
         },
       }
