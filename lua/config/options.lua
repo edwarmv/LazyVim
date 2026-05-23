@@ -5,8 +5,6 @@ vim.g.lazyvim_blink_main = true
 vim.g.snacks_animate = false
 vim.g.trouble_lualine = false
 vim.g.lazyvim_ts_lsp = "tsgo"
-vim.g.use_noice = false
-vim.g.use_bufferline = false
 vim.g.use_incline = false
 
 local user_preferences = require("user_preferences")
@@ -48,7 +46,3 @@ opt.guicursor = table.concat({
 }, ",")
 
 vim.cmd("packadd nvim.undotree")
-
-if not vim.g.vscode and not vim.g.use_noice then
-  require("vim._core.ui2").enable()
-end

@@ -22,38 +22,6 @@ return {
         opts.sections.lualine_x[8] = "" -- Disable diff
       end
       table.insert(opts.sections.lualine_y, 1, { "filetype" })
-      if not vim.g.use_noice then
-        local function macro()
-          local reg = vim.fn.reg_recording()
-          if reg ~= "" then
-            return "Recording @" .. reg
-          end
-          return ""
-        end
-        table.insert(opts.sections.lualine_x, 2, {
-          macro,
-          color = function()
-            return { fg = Snacks.util.color("Statement") }
-          end,
-        })
-        table.insert(opts.sections.lualine_x, 3, "searchcount")
-        table.insert(opts.sections.lualine_x, 4, "selectioncount")
-      end
-
-      if not vim.g.use_bufferline then
-        opts.options.always_show_tabline = false
-        opts.tabline = {
-          lualine_a = {
-            {
-              "tabs",
-              mode = 2,
-              max_length = function()
-                return vim.o.columns
-              end,
-            },
-          },
-        }
-      end
 
       opts.options.disabled_filetypes.winbar = {
         "dap-view",
@@ -132,20 +100,6 @@ return {
   },
   {
     "akinsho/bufferline.nvim",
-    enabled = vim.g.use_bufferline,
-    init = function()
-      vim.api.nvim_create_autocmd("User", {
-        group = vim.api.nvim_create_augroup("EdwarFixBufferlineForPinnedBuffer", { clear = true }),
-        pattern = "UserDefinedBeforeSessionSave",
-        callback = function()
-          if vim.fn.exists("g:BufferlinePinnedBuffers") then
-            if #vim.g["BufferlinePinnedBuffers"] == 0 then
-              vim.cmd("unlet g:BufferlinePinnedBuffers")
-            end
-          end
-        end,
-      })
-    end,
     opts = {
       options = {
         separator_style = "slant",
@@ -164,7 +118,6 @@ return {
   },
   {
     "folke/noice.nvim",
-    enabled = vim.g.use_noice,
     opts = {
       lsp = {
         hover = {
@@ -184,11 +137,6 @@ return {
         },
       },
     },
-  },
-  {
-    "j-hui/fidget.nvim",
-    enabled = not vim.g.use_noice,
-    opts = {},
   },
   {
     "ntpeters/vim-better-whitespace",
