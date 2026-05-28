@@ -8,9 +8,12 @@ return {
   },
   {
     "windwp/nvim-autopairs",
-    enabled = true,
     event = "InsertEnter",
     opts = {},
+  },
+  {
+    "nvim-mini/mini.pairs",
+    enabled = false,
   },
   {
     "saghen/blink.cmp",
@@ -33,6 +36,7 @@ return {
               cmp.show({ providers = { "lsp" } })
             end,
           },
+          ["<C-s>"] = { "show_signature", "hide_signature", "fallback" },
         },
         appearance = {
           kind_icons = vim.tbl_map(function(value)
@@ -77,26 +81,17 @@ return {
             },
           },
         },
+        signature = { enabled = true },
       }
 
       return vim.tbl_deep_extend("force", opts or {}, my_opts)
     end,
   },
   {
-    "nvim-mini/mini.pairs",
-    enabled = false,
-  },
-  {
     "kylechui/nvim-surround",
+    vscode = true,
     event = "VeryLazy",
     opts = {},
-  },
-  {
-    "nvim-mini/mini.ai",
-    enabled = false,
-    opts = function(_, opts)
-      opts.custom_textobjects.t = false
-    end,
   },
   {
     "gbprod/yanky.nvim",
