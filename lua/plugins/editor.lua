@@ -157,7 +157,6 @@ return {
 
       local my_opts = {
         dashboard = {
-          enabled = false,
           preset = {
             header = false,
           },
@@ -171,6 +170,29 @@ return {
           },
         },
         picker = {
+          sources = {
+            lsp_declarations = {
+              include_current = true,
+            },
+            lsp_definitions = {
+              include_current = true,
+            },
+            lsp_implementations = {
+              include_current = true,
+            },
+            lsp_incoming_calls = {
+              include_current = true,
+            },
+            lsp_outgoing_calls = {
+              include_current = true,
+            },
+            lsp_references = {
+              include_current = true,
+            },
+            lsp_type_definitions = {
+              include_current = true,
+            },
+          },
           formatters = {
             file = {
               filename_first = true, -- display filename before the file path
@@ -220,16 +242,6 @@ return {
           },
         },
         styles = {
-          minimal = {
-            wo = {
-              -- To keep consistent fold characters with snacks statuscolumn
-              fillchars = string.format(
-                "eob: ,lastline:…,foldopen:%s,foldclose:%s",
-                user_preferences.icons.foldopen,
-                user_preferences.icons.foldclose
-              ),
-            },
-          },
           lazygit = {
             keys = {
               { "Q", "hide", mode = { "t", "n" } },
@@ -597,6 +609,7 @@ return {
     opts = function()
       local actions = require("diffview.actions")
 
+      local preferred_width = math.max(1, math.floor(vim.o.columns / 4))
       local function toggle_file_panel_width()
         local view = require("diffview.lib").get_current_view()
         if not (view and view.panel) then
@@ -604,7 +617,7 @@ return {
         end
 
         local panel = view.panel
-        local width = panel:get_config().width == "auto" and math.max(1, math.floor(vim.o.columns / 3)) or "auto"
+        local width = panel:get_config().width == "auto" and preferred_width or "auto"
 
         panel._base_config_producer = panel._base_config_producer or panel.config_producer
         local base_config_producer = panel._base_config_producer
@@ -639,7 +652,7 @@ return {
           always_show_sections = true,
           win_config = function()
             return {
-              width = math.max(1, math.floor(vim.o.columns / 3)),
+              width = preferred_width,
               win_opts = {
                 signcolumn = "no",
               },
@@ -1003,7 +1016,6 @@ return {
   {
     "HawkinsT/pathfinder.nvim",
     opts = {
-      open_mode = "split",
       remap_default_keys = false,
     },
     keys = {
@@ -1032,6 +1044,11 @@ return {
         remap = true,
       },
     },
+  },
+  {
+    -- Avoid opening files in specific windows
+    "stevearc/stickybuf.nvim",
+    opts = {},
   },
   {
     "ThePrimeagen/harpoon",
