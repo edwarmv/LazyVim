@@ -23,6 +23,21 @@ return {
       end
       table.insert(opts.sections.lualine_y, 1, { "filetype" })
 
+      if not vim.g.use_bufferline then
+        opts.options.always_show_tabline = false
+        opts.tabline = {
+          lualine_a = {
+            {
+              "tabs",
+              mode = 2,
+              max_length = function()
+                return vim.o.columns
+              end,
+            },
+          },
+        }
+      end
+
       opts.options.disabled_filetypes.winbar = {
         "dap-view",
         "dap-repl",
@@ -100,8 +115,10 @@ return {
   },
   {
     "akinsho/bufferline.nvim",
+    enabled = vim.g.use_bufferline,
     opts = {
       options = {
+        mode = "tabs",
         separator_style = "slant",
         show_close_icon = false,
         show_buffer_close_icons = false,
@@ -227,6 +244,13 @@ return {
     {
       "neovim/nvim-lspconfig",
       opts = { diagnostics = { virtual_text = false } },
+    },
+  },
+  {
+    "tadaa/vimade",
+    opts = {
+      fadelevel = 0.5,
+      ncmode = "windows",
     },
   },
 }
