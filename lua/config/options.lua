@@ -6,6 +6,7 @@ vim.g.snacks_animate = false
 vim.g.trouble_lualine = false
 vim.g.lazyvim_ts_lsp = "tsgo"
 vim.g.use_incline = false
+vim.g.use_bufferline = true
 
 local user_preferences = require("user_preferences")
 
@@ -36,13 +37,5 @@ opt.listchars = {
 }
 opt.foldcolumn = "1"
 opt.showbreak = "↪"
-
--- Cursor appearance and blinking
-opt.guicursor = table.concat({
-  "n-v-c-sm:block-TermCursor", -- Normal, Visual, Command, Showmatch: block cursor
-  "i-ci-ve:ver25-TermCursor", -- Insert, Command-insert, Visual-exclusive: vertical bar (25% width)
-  "r-cr-o:hor20-TermCursor", -- Replace, Command-replace, Operator-pending: horizontal bar (20% height)
-  "a:blinkwait500-blinkoff500-blinkon500",
-}, ",")
 
 vim.cmd("packadd nvim.undotree")
