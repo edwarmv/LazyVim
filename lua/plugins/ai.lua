@@ -139,4 +139,79 @@ return {
     optional = true,
     opts = {},
   },
+  {
+    "piersolenski/wtf.nvim",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "MunifTanjim/nui.nvim",
+      "folke/snacks.nvim",
+    },
+    opts = {
+      provider = "copilot",
+      providers = {
+        copilot = {
+          model_id = "claude-sonnet-4.5",
+        },
+      },
+    },
+    keys = {
+      { "<C-w><C-d>", "", desc = "Diagnostics With AI" },
+      {
+        "<C-w><C-d>d",
+        mode = { "n", "x" },
+        function()
+          require("wtf").diagnose()
+        end,
+        desc = "Debug diagnostic with AI",
+      },
+      {
+        "<C-w><C-d>f",
+        mode = { "n", "x" },
+        function()
+          require("wtf").fix()
+        end,
+        desc = "Fix diagnostic with AI",
+      },
+      {
+        mode = { "n" },
+        "<C-w><C-d>s",
+        function()
+          require("wtf").search()
+        end,
+        desc = "Search diagnostic with Google",
+      },
+      {
+        mode = { "n" },
+        "<C-w><C-d>p",
+        function()
+          require("wtf").pick_provider()
+        end,
+        desc = "Pick provider",
+      },
+      {
+        mode = { "n" },
+        "<C-w><C-d>h",
+        function()
+          require("wtf").history()
+        end,
+        desc = "Populate the quickfix list with previous chat history",
+      },
+      {
+        mode = { "n" },
+        "<C-w><C-d>g",
+        function()
+          require("wtf").grep_history()
+        end,
+        desc = "Grep previous chat history with Telescope",
+      },
+      {
+        "<C-w><C-d>y",
+        mode = { "n", "x" },
+        function()
+          require("wtf").yank()
+        end,
+        desc = "Yank diagnostic to clipboard",
+      },
+    },
+  },
 }
