@@ -13,10 +13,6 @@ Snacks.toggle.option("scrollbind", { name = "Scrollbind" }):map("<leader><leader
 Snacks.toggle.zoom():map("<S-esc>", { mode = { "n", "i", "x", "t" } })
 Snacks.toggle.zoom():map("<S-esc>", { mode = { "n", "i", "x", "t" } })
 
--- delete default snipet keymaps
-vim.keymap.del({ "i", "s" }, "<Tab>")
-vim.keymap.del({ "i", "s" }, "<S-Tab>")
-
 -- save file
 vim.keymap.del({ "i", "x", "n", "s" }, "<C-s>")
 vim.keymap.set({ "i", "x", "n", "s" }, "<M-S-s>", "<cmd>wa<cr><esc>", { desc = "Save All Files" })
