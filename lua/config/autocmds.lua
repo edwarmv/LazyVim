@@ -10,6 +10,16 @@
 vim.api.nvim_create_autocmd("TabLeave", {
   command = "let g:lasttab = tabpagenr()",
 })
+
+vim.api.nvim_create_autocmd("LspDetach", {
+  callback = function(ev)
+    -- fixes an error where the document color provider is not properly
+    -- disabled when the LSP client is detached, which can lead to errors when
+    -- the client is restarted.
+    vim.lsp.document_color.enable(false, { client_id = ev.data.client_id })
+  end,
+})
+
 -- When a tab is closed, switch to the tab on the left if it exists.
 vim.api.nvim_create_autocmd("TabClosed", {
   callback = function()
