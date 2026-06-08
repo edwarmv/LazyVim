@@ -19,9 +19,9 @@ return {
         hl.ResolveOursSection = { link = "DiffAdd" }
         hl.ResolveTheirsSection = { link = "DiffChange" }
         hl.ResolveAncestorSection = { link = "DiffText" }
-        hl.CursorLineFold = { link = "CursorColumn" }
-        hl.CursorLineNr = { link = "CursorColumn" }
-        hl.CursorLineSign = { link = "CursorColumn" }
+        hl.CursorLineFold = { link = "CursorLine" }
+        hl.CursorLineNr = { link = "CursorLine" }
+        hl.CursorLineSign = { link = "CursorLine" }
         hl.LualineModifiedFilename = { fg = c.green, italic = true, bold = true }
         hl.LualineFilename = { fg = c.fg, bold = true }
         if vim.o.background == "light" then
@@ -35,6 +35,10 @@ return {
     lazy = true,
     name = "rose-pine",
     opts = {
+      enable = {
+        -- disable terminal colors to avoid issues with reporting light/dark mode
+        terminal = false,
+      },
       dim_inactive_windows = true,
       highlight_groups = {
         ExtraWhitespace = { fg = "love", bg = "love", blend = 20 },
@@ -60,9 +64,10 @@ return {
         LualineFilename = { fg = "text", bold = true },
         SidekickDiffAdd = { link = "DiffAdd" },
         SidekickDiffContext = { bg = "surface" },
-        CursorLineFold = { link = "CursorColumn" },
-        CursorLineNr = { link = "CursorColumn" },
-        CursorLineSign = { link = "CursorColumn" },
+        CursorLineFold = { link = "CursorLine" },
+        CursorLineNr = { link = "CursorLine" },
+        CursorLineSign = { link = "CursorLine" },
+        PmenuSbar = { bg = "overlay" },
       },
     },
   },
@@ -97,6 +102,11 @@ return {
             ResolveOursSection = { link = "DiffAdd" },
             ResolveTheirsSection = { link = "DiffChange" },
             ResolveAncestorSection = { link = "DiffText" },
+            LualineModifiedFilename = { fg = C.green, italic = true, bold = true },
+            LualineFilename = { fg = C.text, bold = true },
+            CursorLineFold = { link = "CursorLine" },
+            CursorLineNr = { link = "CursorLine" },
+            CursorLineSign = { link = "CursorLine" },
           }
         end,
         highlight_overrides = {
@@ -156,7 +166,7 @@ return {
     "sainnhe/gruvbox-material",
     lazy = true,
     init = function()
-      vim.g.gruvbox_material_float_style = "dim"
+      vim.g.gruvbox_material_float_style = "blend"
       vim.g.gruvbox_material_disable_terminal_colors = true
       vim.g.gruvbox_material_dim_inactive_windows = true
       vim.g.gruvbox_material_enable_italic = true
@@ -179,6 +189,9 @@ return {
           set_hl("ExtraWhitespace", palette.red, palette.bg_visual_red)
           set_hl("LuasnipInsertNodePassive", palette.none, palette.bg3)
           set_hl("LuasnipChoiceNodePassive", palette.none, palette.bg3)
+          set_hl("LualineModifiedFilename", palette.green, palette.none, "italic,bold")
+          set_hl("LualineFilename", palette.fg0, palette.none, "bold")
+          set_hl("PmenuSbar", palette.none, palette.bg5)
           vim.api.nvim_set_hl(0, "ResolveOursMarker", { link = "DiffAdd" })
           vim.api.nvim_set_hl(0, "ResolveTheirsMarker", { link = "DiffChange" })
           vim.api.nvim_set_hl(0, "ResolveSeparatorMarker", { link = "NonText" })
@@ -186,9 +199,9 @@ return {
           vim.api.nvim_set_hl(0, "ResolveOursSection", { link = "DiffAdd" })
           vim.api.nvim_set_hl(0, "ResolveTheirsSection", { link = "DiffChange" })
           vim.api.nvim_set_hl(0, "ResolveAncestorSection", { link = "DiffText" })
-          vim.api.nvim_set_hl(0, "CursorLineFold", { link = "CursorColumn" })
-          vim.api.nvim_set_hl(0, "CursorLineNr", { link = "CursorColumn" })
-          vim.api.nvim_set_hl(0, "CursorLineSign", { link = "CursorColumn" })
+          vim.api.nvim_set_hl(0, "CursorLineFold", { link = "CursorLine" })
+          vim.api.nvim_set_hl(0, "CursorLineNr", { link = "CursorLine" })
+          vim.api.nvim_set_hl(0, "CursorLineSign", { link = "CursorLine" })
         end,
       })
     end,
@@ -198,7 +211,6 @@ return {
     lazy = true,
     init = function()
       vim.g.everforest_float_style = "blend"
-      vim.g.everforest_pmenu_style = "dim"
       vim.g.everforest_disable_terminal_colors = true
       vim.g.everforest_dim_inactive_windows = true
       vim.g.everforest_enable_italic = true
@@ -206,7 +218,6 @@ return {
       vim.g.everforest_diagnostic_line_highlight = true
       vim.g.everforest_diagnostic_virtual_text = "colored"
       vim.g.gruvbox_material_ui_contrast = "high"
-      vim.g.everforest_better_performance = true
 
       vim.api.nvim_create_autocmd("ColorScheme", {
         group = vim.api.nvim_create_augroup("custom_highlights_everforest", {}),
@@ -220,9 +231,11 @@ return {
           set_hl("LuasnipInsertNodePassive", palette.none, palette.bg_visual)
           set_hl("LuasnipChoiceNodePassive", palette.none, palette.bg_visual)
           set_hl("ExtraWhitespace", palette.red, palette.bg_red)
-          vim.api.nvim_set_hl(0, "CursorLineFold", { link = "CursorColumn" })
-          vim.api.nvim_set_hl(0, "CursorLineNr", { link = "CursorColumn" })
-          vim.api.nvim_set_hl(0, "CursorLineSign", { link = "CursorColumn" })
+          set_hl("LualineModifiedFilename", palette.green, palette.none, "italic,bold")
+          set_hl("LualineFilename", palette.fg, palette.none, "bold")
+          vim.api.nvim_set_hl(0, "CursorLineFold", { link = "CursorLine" })
+          vim.api.nvim_set_hl(0, "CursorLineNr", { link = "CursorLine" })
+          vim.api.nvim_set_hl(0, "CursorLineSign", { link = "CursorLine" })
         end,
       })
     end,
@@ -256,5 +269,10 @@ return {
   {
     "webhooked/kanso.nvim",
     lazy = true,
+  },
+  {
+    "marekh19/meowsoot.nvim",
+    lazy = true,
+    opts = {},
   },
 }
