@@ -88,9 +88,6 @@ return {
       },
       servers = {
         ["*"] = {
-          -- on_attach = function(_, bufnr)
-          --   vim.lsp.document_color.enable(true, bufnr, { style = " " })
-          -- end,
           keys = {
             {
               "gK",
