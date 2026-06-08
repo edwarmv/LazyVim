@@ -1,3 +1,5 @@
+local user_preferences = require("user_preferences")
+
 return {
   {
     "saghen/blink.pairs",
@@ -20,16 +22,15 @@ return {
     dependencies = {
       "saghen/blink.lib",
     },
-    optional = true,
+    event = false,
     build = function()
-      require("blink.cmp").build():wait(60000)
+      require("blink.cmp").build():pwait()
     end,
     opts = function(_, opts)
       local icons = vim.deepcopy(LazyVim.config.icons.kinds)
 
       local my_opts = {
         keymap = {
-          preset = "enter",
           ["<C-e>"] = { "cancel", "fallback" },
           ["<S-space>"] = {
             function(cmp)
@@ -37,6 +38,8 @@ return {
             end,
           },
           ["<C-s>"] = { "show_signature", "hide_signature", "fallback" },
+          ["<C-y>"] = { "select_and_accept", "fallback" },
+          ["<C-k>"] = false,
         },
         appearance = {
           kind_icons = vim.tbl_map(function(value)
@@ -46,7 +49,7 @@ return {
         sources = {
           providers = {
             lsp = {
-              opts = { tailwind_color_icon = "" },
+              opts = { tailwind_color_icon = user_preferences.icons.color },
               fallbacks = {},
             },
             snippets = {
@@ -54,6 +57,7 @@ return {
                 extended_filetypes = {
                   typescript = { "javascript" },
                   astro = { "javascript" },
+                  typescriptreact = { "javascript" },
                 },
               },
             },
@@ -66,19 +70,14 @@ return {
           list = {
             selection = {
               preselect = false,
-              auto_insert = true,
             },
           },
           trigger = {
             show_on_backspace = true,
             show_on_backspace_in_keyword = true,
-            show_on_insert = true,
           },
           menu = {
             border = "none",
-            draw = {
-              padding = 1,
-            },
           },
         },
         signature = { enabled = true },
