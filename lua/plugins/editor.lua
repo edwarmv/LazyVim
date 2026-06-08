@@ -360,7 +360,7 @@ return {
   {
     "nvim-neo-tree/neo-tree.nvim",
     opts = {
-      use_popups_for_input = false,
+      popup_border_style = "", -- use winborder option
       auto_clean_after_session_restore = true,
       close_if_last_window = true,
       window = {
@@ -371,8 +371,20 @@ return {
           ["<leader>y"] = "copy_selector",
           ["/"] = false,
           ["z"] = false,
-          ["s"] = false,
-          ["S"] = false,
+          ["s"] = {
+            "quick_jump",
+            config = {
+              on_jump = nil,
+              jump_labels = "jfkdlsahgnuvrbytmiceoxwpqz",
+            },
+          },
+          ["S"] = {
+            "quick_jump",
+            config = {
+              on_jump = "open_or_toggle",
+              jump_labels = "jfkdlsahgnuvrbytmiceoxwpqz",
+            },
+          },
           ["t"] = false,
         },
       },
