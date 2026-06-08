@@ -7,6 +7,17 @@
 -- Or remove existing autocmds by their group name (which is prefixed with `lazyvim_` for the defaults)
 -- e.g. vim.api.nvim_del_augroup_by_name("lazyvim_wrap_spell")
 
-vim.api.nvim_create_autocmd({ "TabLeave" }, {
+vim.api.nvim_create_autocmd("TabLeave", {
   command = "let g:lasttab = tabpagenr()",
+})
+-- When a tab is closed, switch to the tab on the left if it exists.
+vim.api.nvim_create_autocmd("TabClosed", {
+  callback = function()
+    local current_tab = vim.fn.tabpagenr()
+    local tab_on_left = current_tab - 1
+
+    if tab_on_left >= 1 then
+      vim.cmd.tabnext(tab_on_left)
+    end
+  end,
 })
