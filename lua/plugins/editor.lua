@@ -1121,6 +1121,7 @@ return {
       return vim.tbl_deep_extend("force", opts or {}, my_opts)
     end,
   },
+  { "nvim-mini/mini.align", opts = {} },
   {
     -- Better indentexpr
     "hrsh7th/nvim-anydent",
