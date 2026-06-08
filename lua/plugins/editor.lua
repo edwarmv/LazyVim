@@ -1109,4 +1109,15 @@ return {
       return vim.tbl_deep_extend("force", opts or {}, my_opts)
     end,
   },
+  {
+    -- Better indentexpr
+    "hrsh7th/nvim-anydent",
+    config = function()
+      vim.api.nvim_create_autocmd("FileType", {
+        callback = function()
+          require("anydent").attach()
+        end,
+      })
+    end,
+  },
 }

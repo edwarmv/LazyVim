@@ -16,7 +16,11 @@ return {
         end,
       })
 
-      local my_opts = {}
+      local my_opts = {
+        indent = {
+          enable = false,
+        },
+      }
 
       return vim.tbl_deep_extend("force", opts or {}, my_opts)
     end,
