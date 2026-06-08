@@ -23,6 +23,24 @@ return {
       end
       table.insert(opts.sections.lualine_y, 1, { "filetype" })
 
+      if not vim.g.use_noice then
+        local function macro()
+          local reg = vim.fn.reg_recording()
+          if reg ~= "" then
+            return "Recording @" .. reg
+          end
+          return ""
+        end
+        table.insert(opts.sections.lualine_x, 2, {
+          macro,
+          color = function()
+            return { fg = Snacks.util.color("Statement") }
+          end,
+        })
+        table.insert(opts.sections.lualine_x, 3, "searchcount")
+        table.insert(opts.sections.lualine_x, 4, "selectioncount")
+      end
+
       if not vim.g.use_bufferline then
         opts.options.always_show_tabline = false
         opts.tabline = {
@@ -49,6 +67,7 @@ return {
         "snacks_terminal",
         "sidekick_terminal",
         "aerial",
+        "trouble",
       }
       local winbar_config = {
         lualine_c = {
@@ -135,6 +154,7 @@ return {
   },
   {
     "folke/noice.nvim",
+    enabled = vim.g.use_noice,
     opts = {
       lsp = {
         hover = {
@@ -145,15 +165,12 @@ return {
           enabled = false,
         },
       },
-      views = {
-        popupmenu = {
-          border = {
-            style = "none",
-            padding = { 0, 1 },
-          },
-        },
-      },
     },
+  },
+  {
+    "j-hui/fidget.nvim",
+    enabled = not vim.g.use_noice,
+    opts = {},
   },
   {
     "ntpeters/vim-better-whitespace",
@@ -228,29 +245,5 @@ return {
       }
     end,
     event = "VeryLazy",
-  },
-  {
-    {
-      "rachartier/tiny-inline-diagnostic.nvim",
-      event = "VeryLazy",
-      priority = 1000,
-      opts = {
-        preset = "simple",
-        options = {
-          use_icons_from_diagnostic = true,
-        },
-      },
-    },
-    {
-      "neovim/nvim-lspconfig",
-      opts = { diagnostics = { virtual_text = false } },
-    },
-  },
-  {
-    "tadaa/vimade",
-    opts = {
-      fadelevel = 0.5,
-      ncmode = "windows",
-    },
   },
 }

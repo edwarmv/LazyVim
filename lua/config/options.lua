@@ -7,6 +7,7 @@ vim.g.trouble_lualine = false
 vim.g.lazyvim_ts_lsp = "tsgo"
 vim.g.use_incline = false
 vim.g.use_bufferline = true
+vim.g.use_noice = false
 
 local user_preferences = require("user_preferences")
 
@@ -39,3 +40,17 @@ opt.foldcolumn = "1"
 opt.showbreak = "↪"
 
 vim.cmd("packadd nvim.undotree")
+
+if not vim.g.vscode and not vim.g.use_noice then
+  require("vim._core.ui2").enable({
+    msg = {
+      targets = {
+        undo = "msg",
+        bufwrite = "msg",
+      },
+      msg = {
+        timeout = 4000,
+      },
+    },
+  })
+end
