@@ -165,6 +165,19 @@ return {
           enabled = false,
         },
       },
+      -- Configuration for native cmdline popup
+      presets = {
+        command_palette = false,
+      },
+      views = {
+        popupmenu = {
+          border = {
+            style = "none",
+            padding = { 0, 1 },
+          },
+        },
+      },
+      -- end of native cmdline popup configuration
     },
   },
   {
