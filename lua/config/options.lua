@@ -13,6 +13,7 @@ local user_preferences = require("user_preferences")
 
 local opt = vim.opt
 opt.winborder = "rounded"
+opt.timeoutlen = 500
 opt.cmdheight = 0
 opt.pumblend = 0
 opt.wrap = true

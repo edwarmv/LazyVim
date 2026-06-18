@@ -157,10 +157,11 @@ return {
     },
   },
   {
-    "bchmnn/Comment.nvim",
+    "numToStr/Comment.nvim",
     dependencies = {
       "JoosepAlviste/nvim-ts-context-commentstring",
       opts = {
+        enable_autocmd = false,
         languages = {
           less = { __default = "// %s", __multiline = "/* %s */" },
         },

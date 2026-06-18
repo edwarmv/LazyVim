@@ -84,7 +84,7 @@ return {
       delay = function(ctx)
         -- Set the delay to the timeoutlen to avoid conflicts with the
         -- comment.nvim keymaps
-        return ctx.plugin and 0 or vim.o.timeoutlen
+        return ctx.plugin and 0 or vim.o.timeoutlen / 2
       end,
     },
     keys = {
