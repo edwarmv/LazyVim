@@ -11,6 +11,64 @@ return {
     enabled = false,
   },
   {
+    "L3MON4D3/LuaSnip",
+    optional = true,
+    opts = function(_, opts)
+      local ls = require("luasnip")
+      ls.filetype_extend("typescript", { "javascript", "tsdoc" })
+      ls.filetype_extend("javascript", { "jsdoc" })
+      ls.filetype_extend("astro", { "javascript" })
+      ls.filetype_extend("typescriptreact", { "javascript", "tsdoc", "react-es7", "react-ts", "next-ts" })
+      ls.filetype_extend("lua", { "luadoc" })
+      opts.update_events = { "TextChanged", "TextChangedI" }
+      opts.region_check_events = "CursorMoved"
+      opts.delete_check_events = { "TextChanged" }
+    end,
+  },
+  {
+    "nvim-mini/mini.snippets",
+    optional = true,
+    opts = function(_, opts)
+      local snippets = require("mini.snippets")
+      local config_path = vim.fn.stdpath("config")
+      local lang_patterns = {
+        typescript = { "**/javascript.json", "**/tsdoc.json" },
+        astro = { "**/javascript.json" },
+        tsx = {
+          "**/javascript.json",
+          "**/tsdoc.json",
+          "**/react-es7.json",
+          "**/react-ts.json",
+          "**/next-ts.json",
+        },
+      }
+      opts.snippets = {
+        snippets.gen_loader.from_file(config_path .. "/snippets/global.json"),
+        snippets.gen_loader.from_lang({
+          lang_patterns = lang_patterns,
+        }),
+      }
+      -- Stop all sessions on Normal mode exit
+      local make_stop = function()
+        local au_opts = { pattern = "*:n", once = true }
+        au_opts.callback = function()
+          while MiniSnippets.session.get() do
+            MiniSnippets.session.stop()
+          end
+        end
+        vim.api.nvim_create_autocmd("ModeChanged", au_opts)
+      end
+      -- Stop session immediately after jumping to final tabstop
+      vim.api.nvim_create_autocmd("User", { pattern = "MiniSnippetsSessionStart", callback = make_stop })
+      local fin_stop = function(args)
+        if args.data.tabstop_to == "0" then
+          MiniSnippets.session.stop()
+        end
+      end
+      vim.api.nvim_create_autocmd("User", { pattern = "MiniSnippetsSessionJump", callback = fin_stop })
+    end,
+  },
+  {
     "saghen/blink.cmp",
     dependencies = {
       "saghen/blink.lib",
