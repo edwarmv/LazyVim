@@ -88,9 +88,14 @@ return {
               cmp.show({ providers = { "lsp" } })
             end,
           },
-          ["<C-s>"] = { "show_signature", "hide_signature", "fallback" },
           ["<C-y>"] = { "select_and_accept", "fallback" },
-          ["<C-k>"] = false,
+          ["<Tab>"] = {
+            LazyVim.cmp.map({ "ai_nes", "ai_accept" }),
+            "fallback",
+          },
+          ["<S-Tab>"] = false,
+          ["<C-h>"] = { "snippet_backward", "fallback" },
+          ["<C-l>"] = { "snippet_forward", "fallback" },
         },
         appearance = {
           kind_icons = vim.tbl_map(function(value)
@@ -106,9 +111,11 @@ return {
             snippets = {
               opts = {
                 extended_filetypes = {
-                  typescript = { "javascript" },
+                  typescript = { "javascript", "tsdoc" },
+                  javascript = { "jsdoc" },
                   astro = { "javascript" },
-                  typescriptreact = { "javascript" },
+                  typescriptreact = { "javascript", "tsdoc", "react-es7", "react-ts", "next-ts" },
+                  lua = { "luadoc" },
                 },
               },
             },
@@ -117,10 +124,12 @@ return {
             },
           },
         },
+        cmdline = { enabled = false },
         completion = {
           list = {
             selection = {
-              preselect = false,
+              preselect = true,
+              auto_insert = false,
             },
           },
           trigger = {
@@ -131,7 +140,13 @@ return {
             border = "none",
           },
         },
-        signature = { enabled = true },
+        fuzzy = {
+          sorts = {
+            "exact",
+            "score",
+            "sort_text",
+          },
+        },
       }
 
       return vim.tbl_deep_extend("force", opts or {}, my_opts)

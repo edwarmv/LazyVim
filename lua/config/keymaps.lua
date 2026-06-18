@@ -8,15 +8,19 @@ vim.keymap.set("i", "<C-S-f>", "<c-f>")
 vim.keymap.set("c", "<C-b>", "<left>")
 vim.keymap.set("c", "<C-f>", "<right>")
 vim.keymap.set("n", "<C-S-l>", "<c-l><cmd>nohl<cr><cmd>lua Snacks.notifier.hide()<cr>")
+
 -- toggle options
 Snacks.toggle.option("scrollbind", { name = "Scrollbind" }):map("<leader><leader>us")
-Snacks.toggle.zoom():map("<S-esc>", { mode = { "n", "i", "x", "t" } })
 Snacks.toggle.zoom():map("<S-esc>", { mode = { "n", "i", "x", "t" } })
 
 -- save file
 vim.keymap.del({ "i", "x", "n", "s" }, "<C-s>")
 vim.keymap.set({ "i", "x", "n", "s" }, "<M-S-s>", "<cmd>wa<cr><esc>", { desc = "Save All Files" })
 vim.keymap.set({ "i", "x", "n", "s" }, "<M-s>", "<cmd>w<cr><esc>", { desc = "Save File" })
+
+-- delete default snipet keymaps
+vim.keymap.del({ "i", "s" }, "<Tab>")
+vim.keymap.del({ "i", "s" }, "<S-Tab>")
 
 vim.keymap.set("n", "<leader>y", function()
   vim.fn.setreg("+", vim.fn.expand("%:p"))
