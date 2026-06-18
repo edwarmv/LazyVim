@@ -103,7 +103,7 @@ return {
               function()
                 return vim.lsp.buf.signature_help()
               end,
-              mode = { "i", "x", "n", "s" },
+              mode = { "x", "n", "s" },
               desc = "Signature Help",
               has = "signatureHelp",
             },
@@ -167,21 +167,6 @@ return {
             },
           },
         },
-        copilot = {
-          keys = {
-            {
-              "<C-l>",
-              function()
-                if not vim.lsp.inline_completion.get() then
-                  return "<C-l>"
-                end
-              end,
-              mode = { "i" },
-              desc = "Accept Copilot Suggestion",
-              expr = true,
-            },
-          },
-        },
         ["html"] = {
           filetypes = { "html", "templ", "htmlangular" },
         },
@@ -200,6 +185,18 @@ return {
             client.server_capabilities.renameProvider = true
           end)
         end,
+      },
+    },
+  },
+  {
+    "ray-x/lsp_signature.nvim",
+    event = "InsertEnter",
+    opts = {
+      toggle_key = "<C-s>",
+      hint_prefix = {
+        above = "↙ ",
+        current = "← ",
+        below = "↖ ",
       },
     },
   },
