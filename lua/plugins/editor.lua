@@ -860,14 +860,14 @@ return {
       "folke/snacks.nvim",
     },
     opts = {
-      disable_signs = false,
       signs = {
         hunk = { user_preferences.icons.foldclose, user_preferences.icons.foldopen },
         item = { user_preferences.icons.foldclose, user_preferences.icons.foldopen },
         section = { user_preferences.icons.foldclose, user_preferences.icons.foldopen },
       },
-      graph_style = "unicode",
+      graph_style = "kitty",
     },
+    cmd = { "Neogit", "NeogitResetState", "NeogitLog", "NeogitCommit" },
     keys = {
       {
         "<leader>gN",
@@ -881,9 +881,17 @@ return {
         function()
           if vim.b.gitsigns_status_dict then
             require("neogit").open({ cwd = vim.b.gitsigns_status_dict.root })
+          else
+            require("neogit").open()
           end
         end,
         desc = "Neogit (Root Dir)",
+      },
+      {
+        mode = { "n", "x" },
+        "<leader>g<C-l>",
+        ":NeogitLog<CR>",
+        desc = "Neogit Log",
       },
       {
         "<leader>g<C-n>",
