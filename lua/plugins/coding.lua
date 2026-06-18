@@ -2,13 +2,6 @@ local user_preferences = require("user_preferences")
 
 return {
   {
-    "saghen/blink.pairs",
-    enabled = false,
-    build = "cargo build --release",
-    event = "InsertEnter",
-    opts = {},
-  },
-  {
     "windwp/nvim-autopairs",
     event = "InsertEnter",
     opts = {},
