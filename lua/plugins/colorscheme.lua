@@ -275,4 +275,17 @@ return {
     lazy = true,
     opts = {},
   },
+  {
+    "afonsofrancof/OSC11.nvim",
+    opts = {
+      on_dark = function()
+        vim.opt.background = "dark"
+        vim.cmd("colorscheme gruvbox-material")
+      end,
+      on_light = function()
+        vim.opt.background = "light"
+        vim.cmd("colorscheme gruvbox-material")
+      end,
+    },
+  },
 }
