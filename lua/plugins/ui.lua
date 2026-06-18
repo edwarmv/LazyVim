@@ -13,7 +13,6 @@ return {
           return ""
         end,
       }
-      table.insert(opts.extensions, "toggleterm")
       if not vim.g.use_incline then
         opts.sections.lualine_c[1] = "" -- Disable root dir
         opts.sections.lualine_c[2] = "" -- Disable diagnostics
@@ -56,19 +55,9 @@ return {
         }
       end
 
-      opts.options.disabled_filetypes.winbar = {
-        "dap-view",
-        "dap-repl",
-        "snacks_layout_box",
+      opts.options.disabled_filetypes.winbar = vim.list_extend(opts.options.disabled_filetypes.winbar or {}, {
         "qf",
-        "neo-tree",
-        "toggleterm",
-        "snacks_dashboard",
-        "snacks_terminal",
-        "sidekick_terminal",
-        "aerial",
-        "trouble",
-      }
+      })
       local winbar_config = {
         lualine_c = {
           LazyVim.lualine.root_dir(),

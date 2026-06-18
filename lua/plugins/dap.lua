@@ -13,20 +13,32 @@ return {
     },
   },
   {
-    "rcarriga/nvim-dap-ui",
-    opts = {
-      floating = {
-        border = vim.o.winborder,
+    {
+      "rcarriga/nvim-dap-ui",
+      opts = {
+        floating = {
+          border = vim.o.winborder,
+        },
+      },
+      keys = {
+        {
+          "<leader>dU",
+          function()
+            require("dapui").toggle({ reset = true })
+          end,
+          desc = "Dap UI Reset",
+        },
       },
     },
-    keys = {
-      {
-        "<leader>dU",
-        function()
-          require("dapui").toggle({ reset = true })
-        end,
-        desc = "Dap UI Reset",
-      },
+    {
+      "nvim-lualine/lualine.nvim",
+      optional = true,
+      opts = function(_, opts)
+        opts.options.disabled_filetypes.winbar = vim.list_extend(opts.options.disabled_filetypes.winbar or {}, {
+          "dap-view",
+          "dap-repl",
+        })
+      end,
     },
   },
   {

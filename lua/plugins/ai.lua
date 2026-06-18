@@ -104,40 +104,47 @@ return {
     },
   },
   {
-    "folke/sidekick.nvim",
-    optional = true,
-    opts = {
-      nes = {
-        debounce = 500,
-      },
-      cli = {
-        mux = {
-          backend = "tmux",
-          enabled = false,
-        },
-        tools = {
-          opencode = {
-            keys = { prompt = { "<a-p>", "prompt" } },
+    {
+      "folke/sidekick.nvim",
+      optional = true,
+      opts = {
+        cli = {
+          mux = {
+            enabled = true,
+            create = "split",
+          },
+          tools = {
+            opencode = {
+              keys = { prompt = { "<a-p>", "prompt" } },
+            },
           },
         },
       },
+      keys = {
+        {
+          "<c-.>",
+          function()
+            require("sidekick.cli").toggle({ name = "opencode" })
+          end,
+          desc = "Sidekick Toggle",
+          mode = { "n", "t", "i", "x" },
+        },
+        {
+          "<leader>aa",
+          function()
+            require("sidekick.cli").toggle({ name = "opencode" })
+          end,
+          desc = "Sidekick Toggle CLI",
+        },
+      },
     },
-    keys = {
-      {
-        "<c-.>",
-        function()
-          require("sidekick.cli").toggle({ name = "opencode" })
-        end,
-        desc = "Sidekick Toggle",
-        mode = { "n", "t", "i", "x" },
-      },
-      {
-        "<leader>aa",
-        function()
-          require("sidekick.cli").toggle({ name = "opencode" })
-        end,
-        desc = "Sidekick Toggle CLI",
-      },
+    {
+      "nvim-lualine/lualine.nvim",
+      optional = true,
+      opts = function(_, opts)
+        opts.options.disabled_filetypes.winbar =
+          vim.list_extend(opts.options.disabled_filetypes.winbar or {}, { "sidekick_terminal" })
+      end,
     },
   },
   {
@@ -159,6 +166,7 @@ return {
           model_id = "claude-sonnet-4.5",
         },
       },
+      picker = "snacks",
     },
     keys = {
       { "<C-w><C-d>", "", desc = "Diagnostics With AI" },
@@ -208,7 +216,7 @@ return {
         function()
           require("wtf").grep_history()
         end,
-        desc = "Grep previous chat history with Telescope",
+        desc = "Grep previous chat history with picker",
       },
       {
         "<C-w><C-d>y",

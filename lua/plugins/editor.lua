@@ -66,16 +66,27 @@ return {
     },
   },
   {
-    "stevearc/aerial.nvim",
-    optional = true,
-    keys = {
-      {
-        "gss",
-        function()
-          require("aerial").snacks_picker()
-        end,
-        desc = "Aerial Snacks Picker",
+    {
+      "stevearc/aerial.nvim",
+      optional = true,
+      keys = {
+        {
+          "gss",
+          function()
+            require("aerial").snacks_picker()
+          end,
+          desc = "Aerial Snacks Picker",
+        },
       },
+    },
+    {
+      "nvim-lualine/lualine.nvim",
+      optional = true,
+      opts = function(_, opts)
+        table.insert(opts.extensions, "aerial")
+        opts.options.disabled_filetypes.winbar =
+          vim.list_extend(opts.options.disabled_filetypes.winbar or {}, { "aerial" })
+      end,
     },
   },
   {
@@ -151,157 +162,162 @@ return {
     },
   },
   {
-    "folke/snacks.nvim",
-    opts = function(_, opts)
-      local icons = vim.deepcopy(LazyVim.config.icons.kinds)
+    {
+      "folke/snacks.nvim",
+      opts = function(_, opts)
+        local icons = vim.deepcopy(LazyVim.config.icons.kinds)
 
-      local my_opts = {
-        dashboard = {
-          preset = {
-            header = false,
+        local my_opts = {
+          dashboard = {
+            preset = {
+              header = false,
+            },
           },
-        },
-        indent = {
           indent = {
-            char = "▏",
-          },
-          scope = {
-            char = "▏",
-          },
-        },
-        picker = {
-          sources = {
-            lsp_declarations = {
-              include_current = true,
+            indent = {
+              char = "▏",
             },
-            lsp_definitions = {
-              include_current = true,
-            },
-            lsp_implementations = {
-              include_current = true,
-            },
-            lsp_incoming_calls = {
-              include_current = true,
-            },
-            lsp_outgoing_calls = {
-              include_current = true,
-            },
-            lsp_references = {
-              include_current = true,
-            },
-            lsp_type_definitions = {
-              include_current = true,
+            scope = {
+              char = "▏",
             },
           },
-          formatters = {
-            file = {
-              filename_first = true, -- display filename before the file path
+          picker = {
+            sources = {
+              lsp_declarations = {
+                include_current = true,
+              },
+              lsp_definitions = {
+                include_current = true,
+              },
+              lsp_implementations = {
+                include_current = true,
+              },
+              lsp_incoming_calls = {
+                include_current = true,
+              },
+              lsp_outgoing_calls = {
+                include_current = true,
+              },
+              lsp_references = {
+                include_current = true,
+              },
+              lsp_type_definitions = {
+                include_current = true,
+              },
+            },
+            formatters = {
+              file = {
+                filename_first = true, -- display filename before the file path
+              },
+            },
+            win = {
+              input = {
+                keys = {
+                  ["<a-s>"] = { "flash", mode = { "n", "i" } },
+                  ["s"] = { "flash" },
+                },
+              },
+            },
+            icons = {
+              kinds = icons,
+            },
+            actions = {
+              flash = function(picker)
+                require("flash").jump({
+                  pattern = "^",
+                  label = { after = { 0, 0 } },
+                  search = {
+                    mode = "search",
+                    exclude = {
+                      function(win)
+                        return vim.bo[vim.api.nvim_win_get_buf(win)].filetype ~= "snacks_picker_list"
+                      end,
+                    },
+                  },
+                  action = function(match)
+                    local idx = picker.list:row2idx(match.pos[1])
+                    picker.list:_move(idx, true, true)
+                  end,
+                })
+              end,
             },
           },
-          win = {
-            input = {
+          lazygit = {
+            config = {
+              os = {
+                edit = '[ -z "$NVIM" ] && (nvim -- {{filename}}) || (nvim --server "$NVIM" --remote-send "<CMD>q<CR>" && nvim --server "$NVIM" --remote {{filename}})',
+                editAtLine = '[ -z "$NVIM" ] && (nvim +{{line}} -- {{filename}}) || (nvim --server "$NVIM" --remote-send "<CMD>q<CR>" &&  nvim --server "$NVIM" --remote {{filename}} && nvim --server "$NVIM" --remote-send ":{{line}}<CR>")',
+                editAtLineAndWait = "nvim +{{line}} {{filename}}",
+                openDirInEditor = '[ -z "$NVIM" ] && (nvim -- {{dir}}) || (nvim --server "$NVIM" --remote-send "<CMD>q<CR>" && nvim --server "$NVIM" --remote {{dir}})',
+              },
+              promptToReturnFromSubprocess = false,
+            },
+          },
+          styles = {
+            lazygit = {
               keys = {
-                ["<a-s>"] = { "flash", mode = { "n", "i" } },
-                ["s"] = { "flash" },
+                { "Q", "hide", mode = { "t", "n" } },
+              },
+              wo = {
+                winhighlight = "NormalFloat:Normal",
+              },
+            },
+            terminal = {
+              wo = {
+                winhighlight = "NormalFloat:Normal",
+              },
+              keys = {
+                gf = false,
+              },
+            },
+            notification = {
+              wo = {
+                winblend = 0,
+                wrap = true,
               },
             },
           },
-          icons = {
-            kinds = icons,
-          },
-          actions = {
-            flash = function(picker)
-              require("flash").jump({
-                pattern = "^",
-                label = { after = { 0, 0 } },
-                search = {
-                  mode = "search",
-                  exclude = {
-                    function(win)
-                      return vim.bo[vim.api.nvim_win_get_buf(win)].filetype ~= "snacks_picker_list"
-                    end,
-                  },
-                },
-                action = function(match)
-                  local idx = picker.list:row2idx(match.pos[1])
-                  picker.list:_move(idx, true, true)
-                end,
-              })
-            end,
-          },
-        },
-        lazygit = {
-          config = {
-            os = {
-              edit = '[ -z "$NVIM" ] && (nvim -- {{filename}}) || (nvim --server "$NVIM" --remote-send "<CMD>q<CR>" && nvim --server "$NVIM" --remote {{filename}})',
-              editAtLine = '[ -z "$NVIM" ] && (nvim +{{line}} -- {{filename}}) || (nvim --server "$NVIM" --remote-send "<CMD>q<CR>" &&  nvim --server "$NVIM" --remote {{filename}} && nvim --server "$NVIM" --remote-send ":{{line}}<CR>")',
-              editAtLineAndWait = "nvim +{{line}} {{filename}}",
-              openDirInEditor = '[ -z "$NVIM" ] && (nvim -- {{dir}}) || (nvim --server "$NVIM" --remote-send "<CMD>q<CR>" && nvim --server "$NVIM" --remote {{dir}})',
-            },
-            promptToReturnFromSubprocess = false,
-          },
-        },
-        styles = {
-          lazygit = {
-            keys = {
-              { "Q", "hide", mode = { "t", "n" } },
-            },
-            wo = {
-              winhighlight = "NormalFloat:Normal",
-            },
-          },
-          terminal = {
-            wo = {
-              winhighlight = "NormalFloat:Normal",
-            },
-            keys = {
-              gf = false,
-            },
-          },
-          notification = {
-            wo = {
-              winblend = 0,
-              wrap = true,
-            },
-          },
-        },
-        explorer = {},
-      }
+          explorer = {},
+        }
 
-      return vim.tbl_deep_extend("force", opts or {}, my_opts)
-    end,
-    keys = {
-      {
-        "<leader>fe",
-        function()
-          Snacks.explorer({ cwd = LazyVim.root() })
-        end,
-        desc = "Explorer Snacks (root dir)",
+        return vim.tbl_deep_extend("force", opts or {}, my_opts)
+      end,
+      keys = {
+        {
+          "<leader>fe",
+          function()
+            Snacks.explorer({ cwd = LazyVim.root() })
+          end,
+          desc = "Explorer Snacks (root dir)",
+        },
+        {
+          "<leader>fE",
+          function()
+            Snacks.explorer()
+          end,
+          desc = "Explorer Snacks (cwd)",
+        },
+        { "<leader>e", false },
+        { "<leader>E", false },
+        { "<leader><space>", false },
+        {
+          "g<c-t>",
+          function()
+            require("snacks_tab_picker").tabs_picker()
+          end,
+        },
       },
-      {
-        "<leader>fE",
-        function()
-          Snacks.explorer()
-        end,
-        desc = "Explorer Snacks (cwd)",
-      },
-      { "<leader>e", false },
-      { "<leader>E", false },
-      { "<leader><space>", false },
-      {
-        "g<c-t>",
-        function()
-          require("snacks_tab_picker").tabs_picker()
-        end,
-      },
-      --[[ {
-        mode = { "n", "t" },
-        "<c-`>",
-        function()
-          Snacks.terminal()
-        end,
-        desc = "Terminal (cwd)",
-      }, ]]
+    },
+    {
+      "nvim-lualine/lualine.nvim",
+      optional = true,
+      opts = function(_, opts)
+        opts.options.disabled_filetypes.winbar = vim.list_extend(opts.options.disabled_filetypes.winbar or {}, {
+          "snacks_layout_box",
+          "snacks_dashboard",
+          "snacks_terminal",
+        })
+      end,
     },
   },
   {
@@ -358,89 +374,101 @@ return {
     },
   },
   {
-    "nvim-neo-tree/neo-tree.nvim",
-    opts = {
-      popup_border_style = "", -- use winborder option
-      auto_clean_after_session_restore = true,
-      close_if_last_window = true,
-      window = {
-        mappings = {
-          ["<C-s>"] = "split_with_window_picker",
-          ["<C-v>"] = "vsplit_with_window_picker",
-          ["<C-t>"] = "open_tabnew",
-          ["<leader>y"] = "copy_selector",
-          ["/"] = false,
-          ["z"] = false,
-          ["s"] = {
-            "quick_jump",
-            config = {
-              on_jump = nil,
-              jump_labels = "jfkdlsahgnuvrbytmiceoxwpqz",
+    {
+      "nvim-neo-tree/neo-tree.nvim",
+      opts = {
+        popup_border_style = "", -- use winborder option
+        auto_clean_after_session_restore = true,
+        close_if_last_window = true,
+        window = {
+          mappings = {
+            ["<C-s>"] = "split_with_window_picker",
+            ["<C-v>"] = "vsplit_with_window_picker",
+            ["<C-t>"] = "open_tabnew",
+            ["<leader>y"] = "copy_selector",
+            ["/"] = false,
+            ["z"] = false,
+            ["s"] = {
+              "quick_jump",
+              config = {
+                on_jump = nil,
+                jump_labels = "jfkdlsahgnuvrbytmiceoxwpqz",
+              },
             },
-          },
-          ["S"] = {
-            "quick_jump",
-            config = {
-              on_jump = "open_or_toggle",
-              jump_labels = "jfkdlsahgnuvrbytmiceoxwpqz",
+            ["S"] = {
+              "quick_jump",
+              config = {
+                on_jump = "open_or_toggle",
+                jump_labels = "jfkdlsahgnuvrbytmiceoxwpqz",
+              },
             },
+            ["t"] = false,
           },
-          ["t"] = false,
         },
-      },
-      filesystem = {
-        scan_mode = "deep",
-        filtered_items = {
-          visible = true,
+        filesystem = {
+          scan_mode = "deep",
+          filtered_items = {
+            visible = true,
+          },
+          follow_current_file = { enabled = true },
+          hijack_netrw_behavior = "open_current",
         },
-        follow_current_file = { enabled = true },
-        hijack_netrw_behavior = "open_current",
-      },
-      default_component_configs = {
-        indent = { padding = 0 },
-        name = {
-          highlight_opened_files = true,
+        default_component_configs = {
+          indent = { padding = 0 },
+          name = {
+            highlight_opened_files = true,
+          },
+          file_size = { enabled = false },
+          type = { enabled = false },
+          last_modified = { enabled = false },
         },
-        file_size = { enabled = false },
-        type = { enabled = false },
-        last_modified = { enabled = false },
-      },
-      commands = {
-        copy_selector = function(state)
-          local node = state.tree:get_node()
-          local filepath = node:get_id()
-          local filename = node.name
+        commands = {
+          copy_selector = function(state)
+            local node = state.tree:get_node()
+            local filepath = node:get_id()
+            local filename = node.name
 
-          require("copy_path").copy_path(filename, filepath)
-        end,
-      },
-      event_handlers = {
-        {
-          event = "neo_tree_buffer_enter",
-          handler = function()
-            vim.opt_local.foldcolumn = "0"
-            vim.opt_local.foldmethod = "manual"
+            require("copy_path").copy_path(filename, filepath)
           end,
+        },
+        event_handlers = {
+          {
+            event = "neo_tree_buffer_enter",
+            handler = function()
+              vim.opt_local.foldcolumn = "0"
+              vim.opt_local.foldmethod = "manual"
+            end,
+          },
+        },
+      },
+      keys = {
+        { "<leader>fe", false },
+        { "<leader>fE", false },
+        {
+          "<leader>e",
+          function()
+            require("neo-tree.command").execute({ toggle = true, dir = LazyVim.root() })
+          end,
+          desc = "Explorer NeoTree (Root Dir)",
+        },
+        {
+          "<leader>E",
+          function()
+            require("neo-tree.command").execute({ toggle = true, dir = vim.uv.cwd() })
+          end,
+          desc = "Explorer NeoTree (cwd)",
         },
       },
     },
-    keys = {
-      { "<leader>fe", false },
-      { "<leader>fE", false },
-      {
-        "<leader>e",
-        function()
-          require("neo-tree.command").execute({ toggle = true, dir = LazyVim.root() })
-        end,
-        desc = "Explorer NeoTree (Root Dir)",
-      },
-      {
-        "<leader>E",
-        function()
-          require("neo-tree.command").execute({ toggle = true, dir = vim.uv.cwd() })
-        end,
-        desc = "Explorer NeoTree (cwd)",
-      },
+    {
+      "nvim-lualine/lualine.nvim",
+      optional = true,
+      opts = function(_, opts)
+        table.insert(opts.extensions, "neo-tree")
+        opts.options.disabled_filetypes.winbar = vim.list_extend(opts.options.disabled_filetypes.winbar or {}, {
+          "neo-tree",
+        })
+      end,
     },
   },
   {
@@ -1108,18 +1136,30 @@ return {
     end,
   },
   {
-    "folke/trouble.nvim",
-    opts = function(_, opts)
-      local icons = vim.deepcopy(LazyVim.config.icons.kinds)
+    {
+      "folke/trouble.nvim",
+      opts = function(_, opts)
+        local icons = vim.deepcopy(LazyVim.config.icons.kinds)
 
-      local my_opts = {
-        icons = {
-          kinds = icons,
-        },
-      }
+        local my_opts = {
+          icons = {
+            kinds = icons,
+          },
+        }
 
-      return vim.tbl_deep_extend("force", opts or {}, my_opts)
-    end,
+        return vim.tbl_deep_extend("force", opts or {}, my_opts)
+      end,
+    },
+    {
+      "nvim-lualine/lualine.nvim",
+      optional = true,
+      opts = function(_, opts)
+        table.insert(opts.extensions, "trouble")
+        opts.options.disabled_filetypes.winbar = vim.list_extend(opts.options.disabled_filetypes.winbar or {}, {
+          "trouble",
+        })
+      end,
+    },
   },
   { "nvim-mini/mini.align", opts = {} },
   {
