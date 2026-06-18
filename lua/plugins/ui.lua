@@ -217,7 +217,7 @@ return {
     opts = function()
       return {
         window = {
-          padding = 0,
+          padding = 1,
           margin = { horizontal = 0 },
           zindex = 35,
         },
@@ -230,10 +230,9 @@ return {
           local modified = vim.bo[props.buf].modified
 
           return {
-            ft_icon and { " ", ft_icon, group = props.focused and ft_color or "StatusLineNC" } or "",
+            ft_icon and { ft_icon, group = props.focused and ft_color or nil } or "",
             " ",
             { filename, gui = modified and "italic" or "" },
-            " ",
           }
         end,
         highlight = {
