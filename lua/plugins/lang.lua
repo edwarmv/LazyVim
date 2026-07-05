@@ -30,14 +30,6 @@ return {
   },
   {
     "charlesnicholson/plantuml.nvim",
-    dependencies = {
-      "nvim-treesitter",
-      opts = {
-        ensure_installed = {
-          "plantuml",
-        },
-      },
-    },
     opts = {
       auto_start = true,
       auto_update = true,

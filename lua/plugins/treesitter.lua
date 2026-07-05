@@ -1,28 +1,32 @@
 return {
   {
     "nvim-treesitter/nvim-treesitter",
-    opts = function(_, opts)
-      vim.api.nvim_create_autocmd("User", {
-        pattern = "TSUpdate",
-        callback = function()
-          local parsers = require("nvim-treesitter.parsers")
-          parsers.plantuml = {
-            install_info = {
-              url = "https://github.com/bemyak/tree-sitter-plantuml",
-              branch = "master",
-              queries = "queries/plantuml",
-            },
-          }
-        end,
-      })
-
-      local my_opts = {
-        indent = {
-          enable = false,
-        },
-      }
-
-      return vim.tbl_deep_extend("force", opts or {}, my_opts)
+    enabled = false,
+    opts = {
+      indent = {
+        enable = false,
+      },
+    },
+  },
+  {
+    "romus204/tree-sitter-manager.nvim",
+    vscode = true,
+    init = function()
+      if LazyVim.set_default("foldmethod", "expr") then
+        LazyVim.set_default("foldexpr", "v:lua.LazyVim.treesitter.foldexpr()")
+      end
     end,
+    opts = {
+      auto_install = true,
+      languages = {
+        plantuml = {
+          install_info = {
+            url = "https://github.com/bemyak/tree-sitter-plantuml",
+            queries = "queries/plantuml",
+            use_repo_queries = true,
+          },
+        },
+      },
+    },
   },
 }
