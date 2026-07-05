@@ -298,7 +298,6 @@ return {
               },
             },
           },
-          explorer = {},
         }
 
         return vim.tbl_deep_extend("force", opts or {}, my_opts)
@@ -398,6 +397,7 @@ return {
     {
       "nvim-neo-tree/neo-tree.nvim",
       opts = {
+        hijack_netrw_behavior = "disabled",
         popup_border_style = "", -- use winborder option
         auto_clean_after_session_restore = true,
         close_if_last_window = true,
@@ -494,6 +494,7 @@ return {
   },
   {
     "stevearc/oil.nvim",
+    lazy = false,
     dependencies = {
       "mini.icons",
     },
@@ -512,7 +513,7 @@ return {
       },
     },
     keys = {
-      { "<c-->", "<cmd>Oil<cr>", desc = "Oil" },
+      { "-", "<CMD>Oil<CR>", desc = "Open parent directory in Oil" },
     },
   },
   {
