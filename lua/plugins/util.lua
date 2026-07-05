@@ -120,4 +120,72 @@ return {
       },
     },
   },
+  {
+    {
+      "mistweaverco/kulala.nvim",
+      opts = {
+        global_keymaps = {
+          ["Open scratchpad"] = {
+            "<leader>Rb",
+            function()
+              require("kulala").scratchpad()
+            end,
+          },
+          ["Open kulala"] = {
+            "<leader>Ro",
+            function()
+              require("kulala").open()
+            end,
+          },
+          ["Send request"] = {
+            "<leader>Rs",
+            function()
+              require("kulala").run()
+            end,
+            mode = { "n", "v" },
+          },
+          ["Send all requests"] = {
+            "<leader>Ra",
+            function()
+              require("kulala").run_all()
+            end,
+            mode = { "n", "v" },
+          },
+          ["Replay the last request"] = {
+            "<leader>Rr",
+            function()
+              require("kulala").replay()
+            end,
+          },
+        },
+        global_keymaps_prefix = "<localleader>",
+        kulala_keymaps = {
+          ["Previous tab"] = {
+            "<",
+            function()
+              require("kulala.ui").show_previous_tab()
+            end,
+            mode = { "n" },
+          },
+          ["Next tab"] = {
+            ">",
+            function()
+              require("kulala.ui").show_next_tab()
+            end,
+            mode = { "n" },
+          },
+        },
+      },
+      ft = { "http", "rest" },
+      event = { "SessionLoadPost", "VimLeavePre" },
+      keys = false,
+    },
+    {
+      "nvim-lualine/lualine.nvim",
+      optional = true,
+      opts = function(_, opts)
+        table.insert(opts.options.disabled_filetypes.winbar, "kulala_ui")
+      end,
+    },
+  },
 }
