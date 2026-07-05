@@ -22,8 +22,8 @@ vim.api.nvim_create_autocmd("LspDetach", {
 
 -- When a tab is closed, switch to the tab on the left if it exists.
 vim.api.nvim_create_autocmd("TabClosed", {
-  callback = function()
-    local current_tab = vim.fn.tabpagenr()
+  callback = function(ev)
+    local current_tab = tonumber(ev.file)
     local tab_on_left = current_tab - 1
 
     if tab_on_left >= 1 then
