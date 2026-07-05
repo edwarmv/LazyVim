@@ -22,6 +22,24 @@ vim.keymap.set({ "i", "x", "n", "s" }, "<M-s>", "<cmd>w<cr><esc>", { desc = "Sav
 vim.keymap.del({ "i", "s" }, "<Tab>")
 vim.keymap.del({ "i", "s" }, "<S-Tab>")
 
+-- Make restart work with noice.nvim
+if vim.g.use_noice then
+  vim.keymap.set("n", "ZR", function()
+    local count = vim.v.count
+    vim.schedule(function()
+      if count > 0 then
+        -- Default behavior: [count]ZR => :restart +qall!
+        vim.cmd("silent! restart +qall!")
+      else
+        -- Default behavior: ZR => :restart
+        vim.cmd("silent! restart")
+      end
+    end)
+  end, {
+    desc = "Restart Nvim",
+  })
+end
+
 vim.keymap.set("n", "<leader>y", function()
   vim.fn.setreg("+", vim.fn.expand("%:p"))
   require("copy_path").copy_path()
