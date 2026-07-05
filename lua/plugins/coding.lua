@@ -173,6 +173,11 @@ return {
   },
   {
     "numToStr/Comment.nvim",
+    init = function()
+      -- Fixes a bug with which-key where user can not execute gcc
+      vim.keymap.del({ "o", "n", "x" }, "gc")
+    end,
+    event = "VeryLazy",
     dependencies = {
       "JoosepAlviste/nvim-ts-context-commentstring",
       opts = {
