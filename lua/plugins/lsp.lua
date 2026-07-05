@@ -103,7 +103,7 @@ return {
               function()
                 return vim.lsp.buf.signature_help()
               end,
-              mode = { "x", "n", "s" },
+              mode = { "x", "n", "s", "i" },
               desc = "Signature Help",
               has = "signatureHelp",
             },
@@ -185,18 +185,6 @@ return {
             client.server_capabilities.renameProvider = true
           end)
         end,
-      },
-    },
-  },
-  {
-    "ray-x/lsp_signature.nvim",
-    event = "InsertEnter",
-    opts = {
-      toggle_key = "<C-s>",
-      hint_prefix = {
-        above = "↙ ",
-        current = "← ",
-        below = "↖ ",
       },
     },
   },

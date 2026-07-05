@@ -70,10 +70,10 @@ return {
   },
   {
     "saghen/blink.cmp",
+    optional = true,
     dependencies = {
       "saghen/blink.lib",
     },
-    event = false,
     build = function()
       require("blink.cmp").build():pwait()
     end,
@@ -83,11 +83,6 @@ return {
       local my_opts = {
         keymap = {
           ["<C-e>"] = { "cancel", "fallback" },
-          ["<S-space>"] = {
-            function(cmp)
-              cmp.show({ providers = { "lsp" } })
-            end,
-          },
           ["<C-y>"] = { "select_and_accept", "fallback" },
           ["<Tab>"] = {
             LazyVim.cmp.map({ "ai_nes", "ai_accept" }),
@@ -96,6 +91,18 @@ return {
           ["<S-Tab>"] = false,
           ["<C-h>"] = { "snippet_backward", "fallback" },
           ["<C-l>"] = { "snippet_forward", "fallback" },
+          ["<C-s>"] = { "show_signature", "hide_signature", "fallback" },
+          ["<C-k>"] = false,
+          ["<C-j>"] = {
+            function(cmp)
+              return cmp.show({ providers = { "snippets" } })
+            end,
+          },
+          ["<S-Space>"] = {
+            function(cmp)
+              return cmp.show({ providers = { "lsp" } })
+            end,
+          },
         },
         appearance = {
           kind_icons = vim.tbl_map(function(value)
@@ -124,7 +131,7 @@ return {
             },
           },
         },
-        cmdline = { enabled = false },
+        signature = { enabled = true },
         completion = {
           list = {
             selection = {
@@ -132,15 +139,12 @@ return {
               auto_insert = false,
             },
           },
-          trigger = {
-            show_on_backspace = true,
-            show_on_backspace_in_keyword = true,
-          },
           menu = {
             border = "none",
           },
         },
         fuzzy = {
+          max_typos = 0,
           sorts = {
             "exact",
             "score",
