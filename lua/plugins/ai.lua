@@ -60,13 +60,14 @@ return {
     },
     keys = {
       {
-        "<leader>act",
+        "<C-S-.>",
         "<cmd>CodeCompanionChat Toggle<cr>",
         mode = { "n", "v" },
         noremap = true,
         silent = true,
         desc = "CodeCompanion Toggle",
       },
+      { "<leader>ac", "", desc = "Code Companion" },
       {
         "<leader>aca",
         "<cmd>CodeCompanionActions<cr>",
