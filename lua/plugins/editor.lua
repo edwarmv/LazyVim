@@ -1089,9 +1089,9 @@ return {
       return opts
     end,
     keys = {
-      { mode = { "n", "v" }, "<leader>rr", "<Plug>SnipRun", desc = "SnipRun" },
-      { "<leader>r<cr>", "<CMD>%SnipRun<CR>", desc = "SnipRun - Entiry File" },
-      { "<leader>rc", "<CMD>SnipClose<CR>", desc = "SnipClose" },
+      { mode = { "n", "v" }, "gRr", "<Plug>SnipRun", desc = "SnipRun" },
+      { "gR<cr>", "<CMD>%SnipRun<CR>", desc = "SnipRun - Entiry File" },
+      { "gRc", "<CMD>SnipClose<CR>", desc = "SnipClose" },
     },
   },
   {
