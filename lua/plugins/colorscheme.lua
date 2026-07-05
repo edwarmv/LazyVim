@@ -5,6 +5,7 @@ return {
     opts = {
       dim_inactive = true,
       lualine_bold = true,
+      day_brightness = 0.25,
       on_highlights = function(hl, c)
         local util = require("tokyonight.util")
 
@@ -275,6 +276,7 @@ return {
     lazy = true,
     opts = {},
   },
+  { "nyoom-engineering/oxocarbon.nvim", lazy = true },
   {
     "afonsofrancof/OSC11.nvim",
     opts = {
