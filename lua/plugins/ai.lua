@@ -111,7 +111,7 @@ return {
       opts = {
         cli = {
           mux = {
-            enabled = true,
+            enabled = vim.env.TMUX ~= nil,
             create = "split",
           },
           tools = {
