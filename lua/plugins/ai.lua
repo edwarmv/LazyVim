@@ -170,9 +170,9 @@ return {
       picker = "snacks",
     },
     keys = {
-      { "<C-w><C-d>", "", desc = "Diagnostics With AI" },
+      { "<leader>aD", "", desc = "Diagnostics With AI" },
       {
-        "<C-w><C-d>d",
+        "<leader>aDd",
         mode = { "n", "x" },
         function()
           require("wtf").diagnose()
@@ -180,7 +180,7 @@ return {
         desc = "Debug diagnostic with AI",
       },
       {
-        "<C-w><C-d>f",
+        "<leader>aDf",
         mode = { "n", "x" },
         function()
           require("wtf").fix()
@@ -189,7 +189,7 @@ return {
       },
       {
         mode = { "n" },
-        "<C-w><C-d>s",
+        "<leader>aDs",
         function()
           require("wtf").search()
         end,
@@ -197,7 +197,7 @@ return {
       },
       {
         mode = { "n" },
-        "<C-w><C-d>p",
+        "<leader>aDp",
         function()
           require("wtf").pick_provider()
         end,
@@ -205,7 +205,7 @@ return {
       },
       {
         mode = { "n" },
-        "<C-w><C-d>h",
+        "<leader>aDh",
         function()
           require("wtf").history()
         end,
@@ -213,14 +213,14 @@ return {
       },
       {
         mode = { "n" },
-        "<C-w><C-d>g",
+        "<leader>aDg",
         function()
           require("wtf").grep_history()
         end,
         desc = "Grep previous chat history with picker",
       },
       {
-        "<C-w><C-d>y",
+        "<leader>aDy",
         mode = { "n", "x" },
         function()
           require("wtf").yank()
