@@ -887,6 +887,18 @@ return {
         section = { user_preferences.icons.foldclose, user_preferences.icons.foldopen },
       },
       graph_style = "kitty",
+      mappings = {
+        status = {
+          ["1"] = false,
+          ["2"] = false,
+          ["3"] = false,
+          ["4"] = false,
+          ["<localleader>1"] = "Depth1",
+          ["<localleader>2"] = "Depth2",
+          ["<localleader>3"] = "Depth3",
+          ["<localleader>4"] = "Depth4",
+        },
+      },
     },
     cmd = { "Neogit", "NeogitResetState", "NeogitLog", "NeogitCommit" },
     keys = {
