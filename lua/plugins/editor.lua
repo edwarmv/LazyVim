@@ -93,8 +93,6 @@ return {
     "folke/which-key.nvim",
     opts = {
       delay = function(ctx)
-        -- Set the delay to the timeoutlen to avoid conflicts with the
-        -- comment.nvim keymaps
         return ctx.plugin and 0 or vim.o.timeoutlen / 2
       end,
     },
@@ -166,6 +164,31 @@ return {
       "folke/snacks.nvim",
       opts = function(_, opts)
         local icons = vim.deepcopy(LazyVim.config.icons.kinds)
+        local function deduplicate_lsp(lsp_method)
+          return {
+            finder = function(opts, ctx)
+              ctx.picker.seen_lsp = {}
+              -- Call the original built-in snacks LSP finder method
+              return require("snacks.picker.source.lsp")[lsp_method](opts, ctx)
+            end,
+            transform = function(item, ctx)
+              local seen = ctx.picker.seen_lsp
+              if not seen then
+                return item
+              end
+
+              -- Create a unique key based on file path, line, and column position
+              local id = string.format("%s:%s:%s", item.file, item.pos[1], item.pos[2])
+
+              if seen[id] then
+                return false -- Returning false filters out/drops the duplicate item
+              end
+
+              seen[id] = true
+              return item
+            end,
+          }
+        end
 
         local my_opts = {
           dashboard = {
@@ -198,9 +221,7 @@ return {
               lsp_outgoing_calls = {
                 include_current = true,
               },
-              lsp_references = {
-                include_current = true,
-              },
+              lsp_references = deduplicate_lsp("references"),
               lsp_type_definitions = {
                 include_current = true,
               },
