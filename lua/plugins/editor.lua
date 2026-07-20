@@ -790,7 +790,7 @@ return {
             },
             {
               { "n", "x" },
-              "<S-space>",
+              "<M-space>",
               actions.toggle_select_entry,
               { desc = "Toggle file selection for multi-file operations" },
             },
@@ -877,7 +877,6 @@ return {
     "NeogitOrg/neogit",
     dependencies = {
       "nvim-lua/plenary.nvim", -- required
-      -- "esmuellert/codediff.nvim",
       "diffview.nvim",
       "folke/snacks.nvim",
     },
@@ -1046,26 +1045,6 @@ return {
     },
   },
   {
-    "tpope/vim-fugitive",
-    init = function()
-      vim.g.fugitive_legacy_commands = false
-    end,
-  },
-  {
-    "esmuellert/codediff.nvim",
-    enabled = false,
-    cmd = { "CodeDiff", "VscodeDiff" },
-    dependencies = { "MunifTanjim/nui.nvim" },
-    opts = {},
-    keys = {
-      {
-        "<leader><leader>d",
-        ":VscodeDiff",
-        desc = "CodeDiff",
-      },
-    },
-  },
-  {
     "michaelb/sniprun",
     branch = "master",
     build = "sh install.sh",
@@ -1215,4 +1194,5 @@ return {
       })
     end,
   },
+  { "tpope/vim-abolish" },
 }
