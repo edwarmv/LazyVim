@@ -11,7 +11,6 @@ vim.api.nvim_create_autocmd("TabLeave", {
   command = "let g:lasttab = tabpagenr()",
 })
 
-local pull_diagnostic_refresh = {}
 local lsp_capability = require("vim.lsp._capability")
 
 local function in_insert_mode()
@@ -52,7 +51,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
       return
     end
 
-    vim.list_extend(pull_diagnostic_refresh, { client_id })
     refresh_pending_pull_diagnostics(client_id)
   end,
 })
@@ -62,22 +60,11 @@ vim.api.nvim_create_autocmd({
   "InsertLeave",
 }, {
   group = pull_diag_group,
-  callback = function()
-    vim.iter(pull_diagnostic_refresh):each(function(client_id)
-      refresh_pending_pull_diagnostics(client_id)
-    end)
-  end,
-})
-
-vim.api.nvim_create_autocmd("LspDetach", {
-  group = pull_diag_group,
   callback = function(ev)
-    for idx, client_id in pairs(pull_diagnostic_refresh) do
-      if client_id == ev.data.client_id then
-        table.remove(pull_diagnostic_refresh, idx)
-        break
-      end
-    end
+    local clients = vim.lsp.get_clients({ bufnr = ev.buf, method = "textDocument/diagnostic" })
+    vim.iter(clients):each(function(client)
+      refresh_pending_pull_diagnostics(client.id)
+    end)
   end,
 })
 
