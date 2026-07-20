@@ -30,6 +30,7 @@ return {
   },
   {
     "charlesnicholson/plantuml.nvim",
+    dependencies = { "aklt/plantuml-syntax" },
     opts = {
       auto_start = true,
       auto_update = true,
