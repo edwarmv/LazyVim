@@ -10,7 +10,7 @@ vim.keymap.set("c", "<C-f>", "<right>")
 vim.keymap.set("n", "<C-S-l>", "<c-l><cmd>nohl<cr><cmd>lua Snacks.notifier.hide()<cr>")
 
 -- toggle options
-Snacks.toggle.option("scrollbind", { name = "Scrollbind" }):map("<leader><leader>us")
+Snacks.toggle.option("scrollbind", { name = "Scrollbind" }):map("<leader>u<C-s>")
 Snacks.toggle.zoom():map("<S-esc>", { mode = { "n", "i", "x", "t" } })
 
 -- save file
@@ -21,24 +21,6 @@ vim.keymap.set({ "i", "x", "n", "s" }, "<M-s>", "<cmd>w<cr><esc>", { desc = "Sav
 -- delete default snipet keymaps
 vim.keymap.del({ "i", "s" }, "<Tab>")
 vim.keymap.del({ "i", "s" }, "<S-Tab>")
-
--- Make restart work with noice.nvim
-if vim.g.use_noice then
-  vim.keymap.set("n", "ZR", function()
-    local count = vim.v.count
-    vim.schedule(function()
-      if count > 0 then
-        -- Default behavior: [count]ZR => :restart +qall!
-        vim.cmd("silent! restart +qall!")
-      else
-        -- Default behavior: ZR => :restart
-        vim.cmd("silent! restart")
-      end
-    end)
-  end, {
-    desc = "Restart Nvim",
-  })
-end
 
 vim.keymap.set("n", "<leader>y", function()
   vim.fn.setreg("+", vim.fn.expand("%:p"))
