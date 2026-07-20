@@ -25,6 +25,9 @@ return {
   },
   {
     "neovim/nvim-lspconfig",
+    -- Wee need to load this plugin on SessionLoadPre to fix restart session
+    -- issue with LSP servers not being loaded properly
+    event = { "BufReadPre", "BufNewFile", "SessionLoadPre" },
     dependencies = {
       {
         "dnlhc/glance.nvim",
