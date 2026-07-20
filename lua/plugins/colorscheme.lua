@@ -37,7 +37,7 @@ return {
     name = "rose-pine",
     opts = {
       enable = {
-        -- disable terminal colors to avoid issues with reporting light/dark mode
+        -- Disable terminal colors to avoid issues with reporting light/dark mode
         terminal = false,
       },
       dim_inactive_windows = true,
@@ -281,12 +281,10 @@ return {
     "afonsofrancof/OSC11.nvim",
     opts = {
       on_dark = function()
-        vim.opt.background = "dark"
-        vim.cmd("colorscheme gruvbox-material")
+        vim.cmd(string.format("colorscheme %s", vim.g.colors_name))
       end,
       on_light = function()
-        vim.opt.background = "light"
-        vim.cmd("colorscheme gruvbox-material")
+        vim.cmd(string.format("colorscheme %s", vim.g.colors_name))
       end,
     },
   },
