@@ -98,7 +98,7 @@ return {
               return cmp.show({ providers = { "snippets" } })
             end,
           },
-          ["<S-Space>"] = {
+          ["<M-Space>"] = {
             function(cmp)
               return cmp.show({ providers = { "lsp" } })
             end,
@@ -135,7 +135,7 @@ return {
         completion = {
           list = {
             selection = {
-              preselect = true,
+              preselect = false,
               auto_insert = false,
             },
           },
