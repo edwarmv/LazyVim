@@ -47,7 +47,7 @@ return {
         LuasnipInsertNodePassive = { bg = "gold", blend = 20 },
         LuasnipChoiceNodePassive = { bg = "gold", blend = 20 },
         BlinkCmpDocBorder = { fg = "highlight_high", bg = "highlight_low" },
-        PmenuSel = { fg = "none", bg = "overlay" },
+        PmenuSel = { fg = "none", bg = "highlight_med" },
         BufferLineTabSelected = { fg = "text", bg = "base" },
         ConflictMarkerBegin = { bg = "gold", blend = 40 },
         ConflictMarkerOurs = { bg = "gold", blend = 20 },
@@ -69,6 +69,8 @@ return {
         CursorLineNr = { link = "CursorLine" },
         CursorLineSign = { link = "CursorLine" },
         PmenuSbar = { bg = "overlay" },
+        MCursor = { reverse = true },
+        MCursorVisual = { link = "Visual" },
       },
     },
   },
@@ -80,7 +82,7 @@ return {
       local U = require("catppuccin.utils.colors")
 
       return {
-        term_colors = true,
+        term_colors = false,
         dim_inactive = {
           enabled = true,
         },
@@ -276,16 +278,13 @@ return {
     lazy = true,
     opts = {},
   },
+  { "EdenEast/nightfox.nvim", lazy = true },
   { "nyoom-engineering/oxocarbon.nvim", lazy = true },
   {
-    "afonsofrancof/OSC11.nvim",
+    "craftzdog/solarized-osaka.nvim",
+    lazy = true,
     opts = {
-      on_dark = function()
-        vim.cmd(string.format("colorscheme %s", vim.g.colors_name))
-      end,
-      on_light = function()
-        vim.cmd(string.format("colorscheme %s", vim.g.colors_name))
-      end,
+      transparent = false,
     },
   },
 }
