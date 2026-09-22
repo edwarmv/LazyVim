@@ -6,20 +6,18 @@ return {
         code = {
           border = "thin",
         },
-        -- win_options = {
-        --   conceallevel = {
-        --     rendered = 0,
-        --   },
-        -- },
-        -- overrides = {
-        --   buftype = {
-        --     nofile = {
-        --       code = {
-        --         style = "normal",
-        --       },
-        --     },
-        --   },
-        -- },
+        heading = {
+          sign = true,
+          icons = { "󰲡 ", "󰲣 ", "󰲥 ", "󰲧 ", "󰲩 ", "󰲫 " },
+        },
+        anti_conceal = {
+          disabled_modes = { "n" },
+        },
+        win_options = {
+          concealcursor = {
+            rendered = "n",
+          },
+        },
       },
     },
     {
@@ -37,6 +35,21 @@ return {
       http_port = 8764,
       plantuml_server_url = "http://www.plantuml.com/plantuml",
       auto_launch_browser = "never",
+    },
+  },
+  {
+    "Owen-Dechow/videre.nvim",
+    cmd = "Videre",
+    dependencies = {
+      "Owen-Dechow/graph_view_yaml_parser",
+      "Owen-Dechow/graph_view_toml_parser",
+      "a-usr/xml2lua.nvim",
+    },
+    opts = {
+      box_style = vim.o.winborder,
+    },
+    keys = {
+      { "<leader>cg", "<cmd>Videre<cr>", ft = { "json", "yaml", "toml", "xml" }, desc = "View As Graph" },
     },
   },
 }
