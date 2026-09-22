@@ -115,6 +115,13 @@ return {
   },
   {
     "folke/flash.nvim",
+    opts = {
+      modes = {
+        char = {
+          enabled = false,
+        },
+      },
+    },
     keys = {
       { "S", mode = { "n", "o", "x" }, false },
       {
@@ -192,6 +199,7 @@ return {
 
         local my_opts = {
           dashboard = {
+            enabled = false,
             preset = {
               header = false,
             },
@@ -326,6 +334,14 @@ return {
             require("snacks_tab_picker").tabs_picker()
           end,
         },
+        --[[ {
+          mode = { "n", "t" },
+          "<c-`>",
+          function()
+            Snacks.terminal()
+          end,
+          desc = "Terminal (cwd)",
+        }, ]]
       },
     },
     {
@@ -556,6 +572,8 @@ return {
   },
   {
     "jake-stewart/multicursor.nvim",
+    branch = "native",
+    enabled = false,
     config = function()
       local mc = require("multicursor-nvim")
       mc.setup()
@@ -667,7 +685,7 @@ return {
     opts = {},
   },
   {
-    "dlyongemallo/diffview.nvim",
+    "dlyongemallo/diffview-plus.nvim",
     opts = function()
       local actions = require("diffview.actions")
 
@@ -874,13 +892,20 @@ return {
     },
   },
   {
+    "esmuellert/codediff.nvim",
+    cmd = { "CodeDiff" },
+    opts = {},
+  },
+  { "tpope/vim-fugitive" },
+  {
     "NeogitOrg/neogit",
     dependencies = {
       "nvim-lua/plenary.nvim", -- required
-      "diffview.nvim",
+      "diffview-plus.nvim",
       "folke/snacks.nvim",
     },
     opts = {
+      disable_signs = true,
       signs = {
         hunk = { user_preferences.icons.foldclose, user_preferences.icons.foldopen },
         item = { user_preferences.icons.foldclose, user_preferences.icons.foldopen },
@@ -1184,8 +1209,16 @@ return {
   },
   { "nvim-mini/mini.align", opts = {} },
   {
+    "nvim-mini/mini.ai",
+    opts = {
+      goto_left = "[",
+      goto_right = "]",
+    },
+  },
+  {
     -- Better indentexpr
     "hrsh7th/nvim-anydent",
+    enabled = false,
     config = function()
       vim.api.nvim_create_autocmd("FileType", {
         callback = function()
