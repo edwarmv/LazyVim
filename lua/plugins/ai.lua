@@ -1,3 +1,4 @@
+local model = vim.env.OPENAI_MODEL or "gpt-5.6-luna"
 return {
   {
     "olimorris/codecompanion.nvim",
@@ -10,9 +11,12 @@ return {
     },
     opts = function()
       return {
-        strategies = {
+        interactions = {
           chat = {
-            adapter = "copilot",
+            adapter = {
+              name = "copilot",
+              model = model,
+            },
             keymaps = {
               clear = {
                 modes = {
@@ -25,25 +29,10 @@ return {
             },
           },
           inline = {
-            adapter = "copilot",
-          },
-        },
-        adapters = {
-          http = {
-            ["gpt-oss"] = function()
-              return require("codecompanion.adapters").extend("openai_compatible", {
-                env = {
-                  url = "http://localhost:1234", -- optional: default value is ollama url http://127.0.0.1:11434
-                  chat_url = "/v1/chat/completions", -- optional: default value, override if different
-                  models_endpoint = "/v1/models", -- optional: attaches to the end of the URL to form the endpoint to retrieve models
-                },
-                schema = {
-                  model = {
-                    default = "openai/gpt-oss-20b", -- define llm model to be used
-                  },
-                },
-              })
-            end,
+            adapter = {
+              name = "copilot",
+              model = model,
+            },
           },
         },
         extensions = {
@@ -89,20 +78,7 @@ return {
   {
     "yetone/avante.nvim",
     optional = true,
-    opts = {
-      provider = "gpt-oss",
-      providers = {
-        ["gpt-oss"] = {
-          __inherited_from = "openai",
-          endpoint = "http://localhost:1234/v1",
-          model = "openai/gpt-oss-20b",
-          extra_request_body = {
-            max_completion_tokens = 131072,
-            max_tokens = 131072,
-          },
-        },
-      },
-    },
+    opts = {},
   },
   {
     {
@@ -125,7 +101,7 @@ return {
         {
           "<c-.>",
           function()
-            require("sidekick.cli").toggle({ name = "opencode" })
+            require("sidekick.cli").toggle()
           end,
           desc = "Sidekick Toggle",
           mode = { "n", "t", "i", "x" },
@@ -133,7 +109,7 @@ return {
         {
           "<leader>aa",
           function()
-            require("sidekick.cli").toggle({ name = "opencode" })
+            require("sidekick.cli").toggle()
           end,
           desc = "Sidekick Toggle CLI",
         },
@@ -164,7 +140,7 @@ return {
       provider = "copilot",
       providers = {
         copilot = {
-          model_id = "claude-sonnet-4.5",
+          model_id = "claude-sonnet-5",
         },
       },
       picker = "snacks",
