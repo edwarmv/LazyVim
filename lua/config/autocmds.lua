@@ -11,61 +11,95 @@ vim.api.nvim_create_autocmd("TabLeave", {
   command = "let g:lasttab = tabpagenr()",
 })
 
+-- Neovim's built-in pull diagnostics are not as responsive as some LSP
+-- clients, so request an update for the buffers that matter to the user.
+-- This intentionally uses a private master API; fail loudly if its contract
+-- changes instead of silently disabling the workaround.
+require("vim.lsp.diagnostic")
 local lsp_capability = require("vim.lsp._capability")
+local diagnostics =
+  assert(lsp_capability.all and lsp_capability.all.diagnostics, "Neovim pull-diagnostics capability is unavailable")
+local pending_refreshes = {}
+local refresh_delay = 150
 
-local function in_insert_mode()
-  return vim.api.nvim_get_mode().mode:sub(1, 1) == "i"
-end
-
-local function pull_diag_update_in_insert_enabled()
+local function update_in_insert()
   return vim.diagnostic.config().update_in_insert == true
 end
 
-local function refresh_pending_pull_diagnostics(client_id)
-  if in_insert_mode() and not pull_diag_update_in_insert_enabled() then
+local function schedule_refresh(client_id, bufnr)
+  if vim.api.nvim_get_mode().mode:sub(1, 1) == "i" and not update_in_insert() then
     return
   end
 
-  local client = vim.lsp.get_client_by_id(client_id)
-  if not client then
-    return
-  end
+  pending_refreshes[client_id] = pending_refreshes[client_id] or {}
+  local pending = pending_refreshes[client_id]
+  pending[bufnr] = (pending[bufnr] or 0) + 1
+  local request = pending[bufnr]
 
-  for bufnr in pairs(client.attached_buffers) do
-    local diagnostics = lsp_capability.all.diagnostics
-    local provider = diagnostics and diagnostics.active[bufnr]
-    if provider and provider.client_state[client_id] then
-      provider:refresh(client_id, false)
+  vim.defer_fn(function()
+    if pending[bufnr] ~= request then
+      return
+    end
+    pending[bufnr] = nil
+
+    if vim.api.nvim_get_mode().mode:sub(1, 1) == "i" and not update_in_insert() then
+      return
+    end
+
+    local client = vim.lsp.get_client_by_id(client_id)
+    if not client then
+      return
+    end
+
+    -- The provider can disappear while the deferred callback is waiting (for
+    -- example, when a client detaches or a buffer is unloaded). That is a
+    -- normal lifecycle race, not a configuration error.
+    local provider = diagnostics.active[bufnr]
+    if not provider or not provider.client_state[client_id] then
+      return
+    end
+    provider:refresh(client_id)
+  end, refresh_delay)
+end
+
+local function schedule_buffer_refresh(bufnr)
+  local clients = vim.lsp.get_clients({ bufnr = bufnr, method = "textDocument/diagnostic" })
+  vim.iter(clients):each(function(client)
+    schedule_refresh(client.id, bufnr)
+  end)
+end
+
+local function schedule_visible_refresh()
+  local buffers = {}
+  for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+    local bufnr = vim.api.nvim_win_get_buf(win)
+    if not buffers[bufnr] then
+      buffers[bufnr] = true
+      schedule_buffer_refresh(bufnr)
     end
   end
 end
 
 local pull_diag_group = vim.api.nvim_create_augroup("PullDiagnosticsRefresh", { clear = true })
 
-vim.api.nvim_create_autocmd("LspAttach", {
+vim.api.nvim_create_autocmd({ "TextChanged", "TextChangedI", "TextChangedP" }, {
   group = pull_diag_group,
   callback = function(ev)
-    local client_id = ev.data.client_id
-    local client = vim.lsp.get_client_by_id(client_id)
-    if not client or not client:supports_method("textDocument/diagnostic") then
+    if ev.event ~= "TextChanged" and not update_in_insert() then
       return
     end
-
-    refresh_pending_pull_diagnostics(client_id)
+    schedule_visible_refresh()
   end,
 })
 
-vim.api.nvim_create_autocmd({
-  "TextChanged",
-  "InsertLeave",
-}, {
+vim.api.nvim_create_autocmd("InsertLeave", {
   group = pull_diag_group,
-  callback = function(ev)
-    local clients = vim.lsp.get_clients({ bufnr = ev.buf, method = "textDocument/diagnostic" })
-    vim.iter(clients):each(function(client)
-      refresh_pending_pull_diagnostics(client.id)
-    end)
-  end,
+  callback = schedule_visible_refresh,
+})
+
+vim.api.nvim_create_autocmd("BufWinEnter", {
+  group = pull_diag_group,
+  callback = schedule_visible_refresh,
 })
 
 vim.api.nvim_create_autocmd("LspDetach", {
@@ -85,6 +119,24 @@ vim.api.nvim_create_autocmd("TabClosed", {
 
     if tab_on_left >= 1 then
       vim.cmd.tabnext(tab_on_left)
+    end
+  end,
+})
+
+vim.api.nvim_create_autocmd("InsertEnter", {
+  desc = "Disable lsp.inlay_hint when in insert mode",
+  callback = function(args)
+    local filter = { bufnr = args.buf }
+    local inlay_hint = vim.lsp.inlay_hint
+    if inlay_hint.is_enabled(filter) then
+      inlay_hint.enable(false, filter)
+      vim.api.nvim_create_autocmd("InsertLeave", {
+        once = true,
+        desc = "Re-enable lsp.inlay_hint when leaving insert mode",
+        callback = function()
+          inlay_hint.enable(true, filter)
+        end,
+      })
     end
   end,
 })
