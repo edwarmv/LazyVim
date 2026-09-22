@@ -14,10 +14,20 @@ M.change_base = function(buffer, global)
 
   local all = vim.split(result.stdout, "\n", { trimempty = true })
   local original_base = "Original base"
+  local custom_base = "Enter a custom base..."
   table.insert(all, 1, original_base)
+  table.insert(all, custom_base)
 
-  vim.ui.select(all, { prompt = "Select branch" }, function(choice)
+  vim.ui.select(all, { prompt = "Select base" }, function(choice)
     if choice == nil then
+      return
+    elseif choice == custom_base then
+      vim.ui.input({ prompt = "Enter commit, branch, or ref: " }, function(value)
+        if value == nil or value == "" then
+          return
+        end
+        require("gitsigns").change_base(value, global)
+      end)
       return
     elseif choice == original_base then
       choice = nil
