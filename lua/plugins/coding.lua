@@ -13,6 +13,7 @@ return {
   {
     "L3MON4D3/LuaSnip",
     optional = true,
+    event = "VeryLazy",
     opts = function(_, opts)
       local ls = require("luasnip")
       ls.filetype_extend("typescript", { "javascript", "tsdoc" })
@@ -24,6 +25,17 @@ return {
       opts.region_check_events = "CursorMoved"
       opts.delete_check_events = { "TextChanged" }
     end,
+    keys = {
+      {
+        "<C-J>",
+        function()
+          local ls = require("luasnip")
+          ls.expand()
+        end,
+        mode = { "i" },
+        desc = "Expand snippet",
+      },
+    },
   },
   {
     "nvim-mini/mini.snippets",
@@ -75,7 +87,7 @@ return {
       "saghen/blink.lib",
     },
     build = function()
-      require("blink.cmp").build():pwait()
+      require("blink.cmp").download({ force = true, match = "*" }):pwait()
     end,
     opts = function(_, opts)
       local icons = vim.deepcopy(LazyVim.config.icons.kinds)
@@ -91,13 +103,6 @@ return {
           ["<S-Tab>"] = false,
           ["<C-h>"] = { "snippet_backward", "fallback" },
           ["<C-l>"] = { "snippet_forward", "fallback" },
-          ["<C-s>"] = { "show_signature", "hide_signature", "fallback" },
-          ["<C-k>"] = false,
-          ["<C-j>"] = {
-            function(cmp)
-              return cmp.show({ providers = { "snippets" } })
-            end,
-          },
           ["<M-Space>"] = {
             function(cmp)
               return cmp.show({ providers = { "lsp" } })
@@ -131,7 +136,6 @@ return {
             },
           },
         },
-        signature = { enabled = true },
         completion = {
           list = {
             selection = {
@@ -141,14 +145,6 @@ return {
           },
           menu = {
             border = "none",
-          },
-        },
-        fuzzy = {
-          max_typos = 0,
-          sorts = {
-            "exact",
-            "score",
-            "sort_text",
           },
         },
       }
@@ -176,6 +172,21 @@ return {
     },
   },
   {
+    "celeste3z/celeste_comment.nvim",
+    lazy = false,
+    init = function()
+      -- Fixes a bug with which-key where user can not execute gcc
+      vim.keymap.del({ "o", "n", "x" }, "gc")
+    end,
+    opts = {
+      mappings = {
+        line_add_below = "gco",
+        line_add_above = "gcO",
+        line_add_eol = "gcA",
+      },
+    },
+  },
+  --[[ {
     "numToStr/Comment.nvim",
     init = function()
       -- Fixes a bug with which-key where user can not execute gcc
@@ -199,7 +210,7 @@ return {
         pre_hook = require("ts_context_commentstring.integrations.comment_nvim").create_pre_hook(),
       }
     end,
-  },
+  }, ]]
   {
     "folke/ts-comments.nvim",
     enabled = false,
