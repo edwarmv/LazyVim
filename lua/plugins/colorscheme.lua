@@ -20,9 +20,6 @@ return {
         hl.ResolveOursSection = { link = "DiffAdd" }
         hl.ResolveTheirsSection = { link = "DiffChange" }
         hl.ResolveAncestorSection = { link = "DiffText" }
-        hl.CursorLineFold = { link = "CursorLine" }
-        hl.CursorLineNr = { link = "CursorLine" }
-        hl.CursorLineSign = { link = "CursorLine" }
         hl.LualineModifiedFilename = { fg = c.green, italic = true, bold = true }
         hl.LualineFilename = { fg = c.fg, bold = true }
         if vim.o.background == "light" then
@@ -65,9 +62,6 @@ return {
         LualineFilename = { fg = "text", bold = true },
         SidekickDiffAdd = { link = "DiffAdd" },
         SidekickDiffContext = { bg = "surface" },
-        CursorLineFold = { link = "CursorLine" },
-        CursorLineNr = { link = "CursorLine" },
-        CursorLineSign = { link = "CursorLine" },
         PmenuSbar = { bg = "overlay" },
         MCursor = { reverse = true },
         MCursorVisual = { link = "Visual" },
@@ -107,9 +101,6 @@ return {
             ResolveAncestorSection = { link = "DiffText" },
             LualineModifiedFilename = { fg = C.green, italic = true, bold = true },
             LualineFilename = { fg = C.text, bold = true },
-            CursorLineFold = { link = "CursorLine" },
-            CursorLineNr = { link = "CursorLine" },
-            CursorLineSign = { link = "CursorLine" },
           }
         end,
         highlight_overrides = {
@@ -202,9 +193,6 @@ return {
           vim.api.nvim_set_hl(0, "ResolveOursSection", { link = "DiffAdd" })
           vim.api.nvim_set_hl(0, "ResolveTheirsSection", { link = "DiffChange" })
           vim.api.nvim_set_hl(0, "ResolveAncestorSection", { link = "DiffText" })
-          vim.api.nvim_set_hl(0, "CursorLineFold", { link = "CursorLine" })
-          vim.api.nvim_set_hl(0, "CursorLineNr", { link = "CursorLine" })
-          vim.api.nvim_set_hl(0, "CursorLineSign", { link = "CursorLine" })
         end,
       })
     end,
@@ -236,9 +224,6 @@ return {
           set_hl("ExtraWhitespace", palette.red, palette.bg_red)
           set_hl("LualineModifiedFilename", palette.green, palette.none, "italic,bold")
           set_hl("LualineFilename", palette.fg, palette.none, "bold")
-          vim.api.nvim_set_hl(0, "CursorLineFold", { link = "CursorLine" })
-          vim.api.nvim_set_hl(0, "CursorLineNr", { link = "CursorLine" })
-          vim.api.nvim_set_hl(0, "CursorLineSign", { link = "CursorLine" })
         end,
       })
     end,
