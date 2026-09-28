@@ -123,6 +123,7 @@ return {
   {
     {
       "mistweaverco/kulala.nvim",
+      optional = true,
       opts = {
         global_keymaps = {
           ["Open scratchpad"] = {
