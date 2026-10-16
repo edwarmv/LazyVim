@@ -31,6 +31,7 @@ return {
     dependencies = {
       {
         "dnlhc/glance.nvim",
+        event = "LspAttach",
         cmd = "Glance",
         opts = function()
           local glance = require("glance")
@@ -55,9 +56,10 @@ return {
                 ["v"] = false,
                 ["s"] = false,
                 ["t"] = false,
-                ["<c-v>"] = actions.jump_vsplit,
-                ["<c-s>"] = actions.jump_split,
-                ["<c-t>"] = actions.jump_tab,
+                ["<C-v>"] = actions.jump_vsplit,
+                ["<C-s>"] = actions.jump_split,
+                ["<C-t>"] = actions.jump_tab,
+                ["<M-w>"] = actions.enter_win("preview"),
               },
             },
           }
@@ -170,14 +172,25 @@ return {
             },
           },
         },
-        ["html"] = {
+        html = {
           filetypes = { "html", "templ", "htmlangular" },
         },
-        ["cssls"] = {
+        cssls = {
           filetypes = { "css", "less" },
           settings = {
             scss = {
               validate = false,
+            },
+          },
+        },
+        pyright = {
+          settings = {
+            python = {
+              analysis = {
+                -- Pylance/VS Code defaults to not reporting type-checking
+                -- diagnostics unless typeCheckingMode is explicitly enabled.
+                typeCheckingMode = "off",
+              },
             },
           },
         },
