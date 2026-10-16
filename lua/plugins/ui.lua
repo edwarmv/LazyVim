@@ -13,13 +13,6 @@ return {
           return ""
         end,
       }
-      if not vim.g.use_incline then
-        opts.sections.lualine_c[1] = "" -- Disable root dir
-        opts.sections.lualine_c[2] = "" -- Disable diagnostics
-        opts.sections.lualine_c[3] = "" -- Disable filetype
-        opts.sections.lualine_c[4] = "" -- Disable filename
-        opts.sections.lualine_x[8] = "" -- Disable diff
-      end
       table.insert(opts.sections.lualine_y, 1, { "filetype" })
 
       if not vim.g.use_bufferline then
@@ -35,104 +28,6 @@ return {
             },
           },
         }
-      end
-
-      opts.options.disabled_filetypes.winbar = vim.list_extend(opts.options.disabled_filetypes.winbar or {}, {
-        "qf",
-      })
-      local function should_show_winbar()
-        local win = vim.api.nvim_get_current_win()
-        local buf = vim.api.nvim_win_get_buf(win)
-        local buftype = vim.api.nvim_get_option_value("buftype", { buf = buf })
-        local buflisted = vim.api.nvim_get_option_value("buflisted", { buf = buf })
-        local wintype = vim.fn.win_gettype(win)
-        local is_floating = vim.api.nvim_win_get_config(win).relative ~= ""
-
-        return buflisted and buftype == "" and not is_floating and wintype == ""
-      end
-
-      local function add_winbar_condition(component)
-        local original_cond = type(component) == "table" and component.cond or nil
-        local condition = function()
-          return should_show_winbar() and (not original_cond or original_cond())
-        end
-
-        if type(component) == "table" then
-          component.cond = condition
-          return component
-        end
-        return { component, cond = condition }
-      end
-
-      local winbar_config = {
-        lualine_c = {
-          LazyVim.lualine.root_dir(),
-          {
-            "filetype",
-            icon_only = true,
-            padding = { left = 1, right = 0 },
-            separator = "",
-          },
-          { -- Fallback for when no icon is available
-            function()
-              return " "
-            end,
-            cond = function()
-              return vim.bo.filetype == ""
-            end,
-            padding = 0,
-            separator = "",
-          },
-          {
-            LazyVim.lualine.pretty_path({
-              filename_hl = "LualineFilename",
-              modified_hl = "LualineModifiedFilename",
-            }),
-            padding = { left = 0, right = 1 },
-            separator = "",
-          },
-          {
-            "diff",
-            padding = { left = 0, right = 1 },
-            separator = "",
-            symbols = {
-              added = icons.git.added,
-              modified = icons.git.modified,
-              removed = icons.git.removed,
-            },
-            source = function()
-              local gitsigns = vim.b.gitsigns_status_dict
-              if gitsigns then
-                return {
-                  added = gitsigns.added,
-                  modified = gitsigns.changed,
-                  removed = gitsigns.removed,
-                }
-              end
-            end,
-          },
-          {
-            "diagnostics",
-            padding = { left = 0, right = 1 },
-            symbols = {
-              error = icons.diagnostics.Error,
-              warn = icons.diagnostics.Warn,
-              info = icons.diagnostics.Info,
-              hint = icons.diagnostics.Hint,
-            },
-          },
-        },
-      }
-
-      for section_name, components in pairs(winbar_config) do
-        for index, component in ipairs(components) do
-          winbar_config[section_name][index] = add_winbar_condition(component)
-        end
-      end
-
-      if not vim.g.use_incline then
-        opts.winbar = winbar_config
-        opts.inactive_winbar = winbar_config
       end
     end,
   },
@@ -221,7 +116,6 @@ return {
   },
   {
     "b0o/incline.nvim",
-    enabled = vim.g.use_incline,
     dependencies = {
       "nvim-mini/mini.icons",
     },
