@@ -2,11 +2,12 @@
 -- Default options that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/options.lua
 -- Add any additional options here
 vim.g.lazyvim_blink_main = true
+vim.g.lazyvim_ts_lsp = "tsc"
 vim.g.snacks_animate = false
 vim.g.trouble_lualine = false
-vim.g.use_incline = false
+vim.g.use_incline = true
 vim.g.use_bufferline = true
-vim.g.use_noice = false
+vim.g.use_noice = true
 
 local user_preferences = require("user_preferences")
 
