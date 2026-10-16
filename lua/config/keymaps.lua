@@ -10,9 +10,15 @@ vim.keymap.set("c", "<C-f>", "<right>")
 vim.keymap.set("n", "<C-S-l>", function()
   vim.cmd("nohlsearch")
   vim.cmd("diffupdate")
-  MultiCursor.clear(0)
   Snacks.notifier.hide()
 end)
+
+-- Scroll 5 characters horizontally using Alt + h / l
+vim.keymap.set({ "n", "v" }, "<C-S-y>", "5zh", { desc = "Scroll left" })
+vim.keymap.set({ "n", "v" }, "<C-S-e>", "5zl", { desc = "Scroll right" })
+-- Scroll half a screen width using Ctrl + Shift + H / L
+vim.keymap.set({ "n", "v" }, "<C-S-u>", "zH", { desc = "Scroll half screen left" })
+vim.keymap.set({ "n", "v" }, "<C-S-d>", "zL", { desc = "Scroll half screen right" })
 
 -- toggle options
 Snacks.toggle.option("scrollbind", { name = "Scrollbind" }):map("<leader><leader>us")
@@ -34,24 +40,6 @@ vim.keymap.set({ "i", "x", "n", "s" }, "<M-s>", "<cmd>w<cr><esc>", { desc = "Sav
 -- delete default snipet keymaps
 vim.keymap.del({ "i", "s" }, "<Tab>")
 vim.keymap.del({ "i", "s" }, "<S-Tab>")
-
--- Make restart work with noice.nvim
-if vim.g.use_noice then
-  vim.keymap.set("n", "ZR", function()
-    local count = vim.v.count
-    vim.schedule(function()
-      if count > 1 and count <= 8 then
-        vim.cmd("silent! restart! +qall")
-      elseif count == 9 then
-        vim.cmd("silent! restart! +qall!")
-      else
-        vim.cmd("silent! restart")
-      end
-    end)
-  end, {
-    desc = "Restart Nvim",
-  })
-end
 
 vim.keymap.set("n", "<leader>y", function()
   vim.fn.setreg("+", vim.fn.expand("%:p"))
