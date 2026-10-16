@@ -5,7 +5,6 @@ vim.g.lazyvim_blink_main = true
 vim.g.lazyvim_ts_lsp = "tsc"
 vim.g.snacks_animate = false
 vim.g.trouble_lualine = false
-vim.g.use_bufferline = true
 
 local user_preferences = require("user_preferences")
 

@@ -2,7 +2,6 @@ return {
   {
     "nvim-lualine/lualine.nvim",
     opts = function(_, opts)
-      local icons = LazyVim.config.icons
       opts.sections.lualine_b[1] = {
         "branch",
         fmt = function(value)
@@ -14,26 +13,10 @@ return {
         end,
       }
       table.insert(opts.sections.lualine_y, 1, { "filetype" })
-
-      if not vim.g.use_bufferline then
-        opts.options.always_show_tabline = false
-        opts.tabline = {
-          lualine_a = {
-            {
-              "tabs",
-              mode = 2,
-              max_length = function()
-                return vim.o.columns
-              end,
-            },
-          },
-        }
-      end
     end,
   },
   {
     "akinsho/bufferline.nvim",
-    enabled = vim.g.use_bufferline,
     opts = {
       options = {
         mode = "tabs",
