@@ -18,6 +18,11 @@ return {
             rendered = "n",
           },
         },
+        html = {
+          comment = {
+            conceal = false,
+          },
+        },
       },
     },
     {
