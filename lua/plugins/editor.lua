@@ -2,9 +2,12 @@ local user_preferences = require("user_preferences")
 
 return {
   {
-    "mrjones2014/smart-splits.nvim",
+    "smart-splits-nvim/smart-splits.nvim",
     opts = {
-      cursor_follows_swapped_bufs = true,
+      mux = {
+        backend = { "smart-splits-backend-tmux" },
+        warn_if_unusable = false,
+      },
     },
     keys = {
       {
@@ -64,6 +67,9 @@ return {
         desc = "Swap Buf Right",
       },
     },
+    dependencies = {
+      { "smart-splits-nvim/backend-tmux", main = "smart-splits-backend-tmux" },
+    },
   },
   {
     {
@@ -115,13 +121,6 @@ return {
   },
   {
     "folke/flash.nvim",
-    opts = {
-      modes = {
-        char = {
-          enabled = false,
-        },
-      },
-    },
     keys = {
       { "S", mode = { "n", "o", "x" }, false },
       {
@@ -448,7 +447,10 @@ return {
             visible = true,
           },
           follow_current_file = { enabled = true },
-          hijack_netrw_behavior = "open_current",
+        },
+        source_selector = {
+          winbar = true,
+          show_scrolled_off_parent_node = true,
         },
         default_component_configs = {
           indent = { padding = 0 },
@@ -484,14 +486,14 @@ return {
         {
           "<leader>e",
           function()
-            require("neo-tree.command").execute({ toggle = true, dir = LazyVim.root() })
+            require("neo-tree.command").execute({ toggle = true, source = "last", dir = LazyVim.root() })
           end,
           desc = "Explorer NeoTree (Root Dir)",
         },
         {
           "<leader>E",
           function()
-            require("neo-tree.command").execute({ toggle = true, dir = vim.uv.cwd() })
+            require("neo-tree.command").execute({ toggle = true, source = "last", dir = vim.uv.cwd() })
           end,
           desc = "Explorer NeoTree (cwd)",
         },
@@ -572,8 +574,6 @@ return {
   },
   {
     "jake-stewart/multicursor.nvim",
-    branch = "native",
-    enabled = false,
     config = function()
       local mc = require("multicursor-nvim")
       mc.setup()
@@ -672,17 +672,6 @@ return {
       { "<leader>gy", "<cmd>GitLink<cr>", mode = { "n", "v" }, desc = "Yank git link" },
       { "<leader>gY", "<cmd>GitLink!<cr>", mode = { "n", "v" }, desc = "Open git link" },
     },
-  },
-  {
-    "rhysd/conflict-marker.vim",
-    enabled = false,
-    event = "VeryLazy",
-  },
-  {
-    "spacedentist/resolve.nvim",
-    enabled = false,
-    event = { "BufReadPre", "BufNewFile" },
-    opts = {},
   },
   {
     "dlyongemallo/diffview-plus.nvim",
@@ -842,11 +831,6 @@ return {
             },
           },
         },
-        view = {
-          merge_tool = {
-            disable_diagnostics = false,
-          },
-        },
       }
     end,
     cmd = {
@@ -890,11 +874,6 @@ return {
       },
       { "<leader><leader>dr", "<cmd>DiffviewRefresh<cr>", desc = "Diffview - Refresh" },
     },
-  },
-  {
-    "esmuellert/codediff.nvim",
-    cmd = { "CodeDiff" },
-    opts = {},
   },
   { "tpope/vim-fugitive" },
   {
@@ -1065,6 +1044,11 @@ return {
         map("n", "<leader>ghC", function()
           require("git_utils").change_base(buffer)
         end,  "Change Base" )
+        map('n', '<leader>ghQ', function() gs.setqflist('all') end, "Set QF List (All)")
+        map('n', '<leader>ghq', gs.setqflist, "Set QF List (Hunks)")
+        -- Toggles
+        map('n', '<leader>gtb', gs.toggle_current_line_blame, "Toggle Current Line Blame")
+        map('n', '<leader>gtw', gs.toggle_word_diff, "Toggle Word Diff")
         map({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<CR>", "GitSigns Select Hunk")
       end,
     },
