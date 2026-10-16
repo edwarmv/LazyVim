@@ -7,7 +7,6 @@ vim.g.snacks_animate = false
 vim.g.trouble_lualine = false
 vim.g.use_incline = true
 vim.g.use_bufferline = true
-vim.g.use_noice = true
 
 local user_preferences = require("user_preferences")
 
@@ -38,13 +37,3 @@ opt.listchars = {
 }
 
 vim.cmd("packadd nvim.undotree")
-
-if not vim.g.vscode and not vim.g.use_noice then
-  require("vim._core.ui2").enable({
-    msg = {
-      targets = {
-        default = "msg",
-      },
-    },
-  })
-end

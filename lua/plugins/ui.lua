@@ -22,24 +22,6 @@ return {
       end
       table.insert(opts.sections.lualine_y, 1, { "filetype" })
 
-      if not vim.g.use_noice then
-        local function macro()
-          local reg = vim.fn.reg_recording()
-          if reg ~= "" then
-            return "Recording @" .. reg
-          end
-          return ""
-        end
-        table.insert(opts.sections.lualine_x, 2, {
-          macro,
-          color = function()
-            return { fg = Snacks.util.color("Statement") }
-          end,
-        })
-        table.insert(opts.sections.lualine_x, 3, "searchcount")
-        table.insert(opts.sections.lualine_x, 4, "selectioncount")
-      end
-
       if not vim.g.use_bufferline then
         opts.options.always_show_tabline = false
         opts.tabline = {
@@ -176,7 +158,6 @@ return {
   },
   {
     "folke/noice.nvim",
-    enabled = vim.g.use_noice,
     opts = {
       lsp = {
         hover = {
@@ -201,11 +182,6 @@ return {
       },
       -- end of native cmdline popup configuration
     },
-  },
-  {
-    "j-hui/fidget.nvim",
-    enabled = not vim.g.use_noice,
-    opts = {},
   },
   {
     "ntpeters/vim-better-whitespace",
