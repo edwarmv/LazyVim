@@ -1,4 +1,4 @@
-local model = vim.env.OPENAI_MODEL or "gpt-5.6-luna"
+local model = vim.env.OPENAI_MODEL or "gpt-6-luna"
 return {
   {
     "olimorris/codecompanion.nvim",
@@ -39,6 +39,9 @@ return {
           history = {
             enabled = true,
           },
+          ui = {
+            enabled = true,
+          },
         },
       }
     end,
@@ -46,6 +49,7 @@ return {
       "nvim-lua/plenary.nvim",
       "nvim-treesitter/nvim-treesitter",
       "ravitemer/codecompanion-history.nvim",
+      "mrjones2014/codecompanion-ui.nvim",
     },
     keys = {
       {
@@ -140,7 +144,7 @@ return {
       provider = "copilot",
       providers = {
         copilot = {
-          model_id = "claude-sonnet-5",
+          model_id = "claude-sonnet-5.5",
         },
       },
       picker = "snacks",
