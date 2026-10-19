@@ -87,7 +87,7 @@ return {
       "saghen/blink.lib",
     },
     build = function()
-      require("blink.cmp").download({ force = true, match = "*" }):pwait()
+      require("blink.cmp").build():pwait()
     end,
     opts = function(_, opts)
       local icons = vim.deepcopy(LazyVim.config.icons.kinds)
