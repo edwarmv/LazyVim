@@ -8,17 +8,19 @@ vim.g.trouble_lualine = false
 
 local user_preferences = require("user_preferences")
 
+local o = vim.o
+o.winborder = "rounded"
+o.timeoutlen = 500
+o.cmdheight = 0
+o.pumblend = 0
+o.wrap = true
+o.linebreak = true -- Wrap lines at 'breakat' (if 'wrap' is set)
+o.breakindent = true -- Indent wrapped lines to match line start
+o.breakindentopt = "list:-1" -- Add padding for lists (if 'wrap' is set)
+o.relativenumber = false
+o.cursorcolumn = true
+
 local opt = vim.opt
-opt.winborder = "rounded"
-opt.timeoutlen = 500
-opt.cmdheight = 0
-opt.pumblend = 0
-opt.wrap = true
-opt.linebreak = true -- Wrap lines at 'breakat' (if 'wrap' is set)
-opt.breakindent = true -- Indent wrapped lines to match line start
-opt.breakindentopt = "list:-1" -- Add padding for lists (if 'wrap' is set)
-opt.relativenumber = false
-opt.cursorcolumn = true
 opt.fillchars = {
   foldopen = user_preferences.icons.foldopen,
   foldclose = user_preferences.icons.foldclose,
