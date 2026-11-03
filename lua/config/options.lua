@@ -2,7 +2,6 @@
 -- Default options that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/options.lua
 -- Add any additional options here
 vim.g.lazyvim_blink_main = true
-vim.g.lazyvim_ts_lsp = "tsc"
 vim.g.snacks_animate = false
 vim.g.trouble_lualine = false
 
@@ -31,7 +30,6 @@ opt.fillchars = {
   eob = " ",
 }
 opt.listchars = {
-  trail = "·",
   tab = "> ",
   eol = " ",
 }
