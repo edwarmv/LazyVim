@@ -78,6 +78,8 @@ vim.keymap.set("n", "<leader><tab>D", function()
   end
   vim.cmd("tabclose")
   for _, buf in ipairs(bufs) do
-    vim.api.nvim_buf_delete(buf, {})
+    if vim.api.nvim_buf_is_valid(buf) then
+      vim.api.nvim_buf_delete(buf, {})
+    end
   end
 end, { desc = "Close Tab And Its Buffers" })
