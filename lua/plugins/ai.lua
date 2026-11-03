@@ -1,4 +1,3 @@
-local model = vim.env.OPENAI_MODEL or "gpt-6-luna"
 return {
   {
     "olimorris/codecompanion.nvim",
@@ -15,7 +14,7 @@ return {
           chat = {
             adapter = {
               name = "copilot",
-              model = model,
+              model = "auto",
             },
             keymaps = {
               clear = {
@@ -31,7 +30,18 @@ return {
           inline = {
             adapter = {
               name = "copilot",
-              model = model,
+              model = "auto",
+            },
+          },
+          background = {
+            adapter = {
+              name = "copilot",
+              model = "auto",
+            },
+            chat = {
+              opts = {
+                enabled = true,
+              },
             },
           },
         },
