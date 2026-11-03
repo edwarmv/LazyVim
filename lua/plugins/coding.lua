@@ -13,7 +13,6 @@ return {
   {
     "L3MON4D3/LuaSnip",
     optional = true,
-    event = "VeryLazy",
     opts = function(_, opts)
       local ls = require("luasnip")
       ls.filetype_extend("typescript", { "javascript", "tsdoc" })
