@@ -5,7 +5,7 @@ return {
     "smart-splits-nvim/smart-splits.nvim",
     opts = {
       mux = {
-        backend = { "smart-splits-backend-tmux" },
+        backend = { "smart-splits-backend-rex", "smart-splits-backend-tmux" },
         warn_if_unusable = false,
       },
     },
@@ -69,6 +69,10 @@ return {
     },
     dependencies = {
       { "smart-splits-nvim/backend-tmux", main = "smart-splits-backend-tmux" },
+      {
+        "rawnly/smart-splits-backend-rex",
+        opts = {},
+      },
     },
   },
   {
