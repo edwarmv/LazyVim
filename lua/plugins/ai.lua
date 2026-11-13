@@ -97,11 +97,19 @@ return {
   {
     {
       "folke/sidekick.nvim",
+      dependencies = {
+        "willian/sidekick-rex.nvim",
+      },
       optional = true,
+      config = function(_, opts)
+        require("sidekick-rex").setup()
+        require("sidekick").setup(opts)
+      end,
       opts = {
         cli = {
           mux = {
-            enabled = vim.env.TMUX ~= nil,
+            enabled = vim.env.REX_SESSION ~= nil or vim.env.TMUX ~= nil,
+            backend = vim.env.REX_SESSION and "rex" or "tmux",
             create = "split",
           },
           tools = {
