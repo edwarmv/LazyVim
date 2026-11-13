@@ -4,19 +4,7 @@ return {
       "MeanderingProgrammer/render-markdown.nvim",
       opts = {
         code = {
-          border = "thin",
-        },
-        heading = {
-          sign = true,
-          icons = { "󰲡 ", "󰲣 ", "󰲥 ", "󰲧 ", "󰲩 ", "󰲫 " },
-        },
-        anti_conceal = {
-          disabled_modes = { "n" },
-        },
-        win_options = {
-          concealcursor = {
-            rendered = "n",
-          },
+          border = "thick",
         },
         html = {
           comment = {
