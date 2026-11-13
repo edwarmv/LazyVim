@@ -121,6 +121,13 @@ return {
   },
   {
     "folke/flash.nvim",
+    opts = {
+      modes = {
+        char = {
+          enabled = false,
+        },
+      },
+    },
     keys = {
       { "S", mode = { "n", "o", "x" }, false },
       {
@@ -574,6 +581,7 @@ return {
   },
   {
     "jake-stewart/multicursor.nvim",
+    branch = "native",
     config = function()
       local mc = require("multicursor-nvim")
       mc.setup()
