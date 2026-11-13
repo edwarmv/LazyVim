@@ -1,5 +1,53 @@
 local user_preferences = require("user_preferences")
 
+---Pick between the git root and its submodules, then call `on_select` with the chosen absolute path.
+---@param on_select fun(path: string)
+local function select_git_submodule(on_select)
+  local cwd = vim.fn.getcwd(-1, -1)
+  local root = vim.system({ "git", "rev-parse", "--show-toplevel" }, { cwd = cwd }):wait()
+
+  if root.code ~= 0 then
+    vim.notify("Unable to find git root for current cwd", vim.log.levels.ERROR)
+    return
+  end
+
+  local repo_root = vim.trim(root.stdout)
+  local submodule_result = vim.system({ "git", "submodule", "status", "--recursive" }, { cwd = repo_root }):wait()
+
+  if submodule_result.code ~= 0 then
+    vim.notify("Failed to read git submodules", vim.log.levels.ERROR)
+    return
+  end
+
+  local submodules = {}
+  for _, line in ipairs(vim.split(submodule_result.stdout, "\n", { trimempty = true })) do
+    local path = vim.trim(line):match("^%S+%s+([^%s]+)")
+    if path then
+      table.insert(submodules, path)
+    end
+  end
+
+  if vim.tbl_isempty(submodules) then
+    vim.notify("No git submodules found", vim.log.levels.INFO)
+    return
+  end
+
+  table.sort(submodules)
+  table.insert(submodules, 1, ".")
+
+  vim.ui.select(submodules, {
+    prompt = "Select submodule",
+    format_item = function(item)
+      return item == "." and "(root)" or item
+    end,
+  }, function(choice)
+    if choice == nil then
+      return
+    end
+    on_select(choice == "." and repo_root or vim.fs.joinpath(repo_root, choice))
+  end)
+end
+
 return {
   {
     "smart-splits-nvim/smart-splits.nvim",
@@ -877,6 +925,29 @@ return {
         desc = "Diffview - Open Against a Branch",
       },
       { "<leader><leader>do", "<cmd>DiffviewOpen<cr>", desc = "Diffview - Open" },
+      {
+        "<leader><leader>d<C-o>",
+        function()
+          select_git_submodule(function(path)
+            local diffview = require("diffview")
+            local view = require("diffview.lib").get_current_view()
+            local args = { "-C" .. path }
+
+            -- A view is bound to its repo, so replace the current one, keeping its revision.
+            if view and view:instanceof(require("diffview.scene.views.diff.diff_view").DiffView) then
+              if view.rev_arg then
+                table.insert(args, 1, view.rev_arg)
+              end
+              if diffview.close() == false then
+                return
+              end
+            end
+
+            diffview.open(args)
+          end)
+        end,
+        desc = "Diffview - Open (Select Submodule)",
+      },
       { "<leader><leader>dH", "<cmd>DiffviewFileHistory<cr>", desc = "Diffview - File History" },
       {
         mode = { "n", "x" },
@@ -891,8 +962,7 @@ return {
   {
     "NeogitOrg/neogit",
     dependencies = {
-      "nvim-lua/plenary.nvim", -- required
-      "diffview-plus.nvim",
+      "dlyongemallo/diffview-plus.nvim",
       "folke/snacks.nvim",
     },
     opts = {
@@ -945,45 +1015,8 @@ return {
       {
         "<leader>g<C-n>",
         function()
-          local cwd = vim.fn.getcwd(-1, -1)
-          local root = vim.system({ "git", "rev-parse", "--show-toplevel" }, { cwd = cwd }):wait()
-
-          if root.code ~= 0 then
-            vim.notify("Unable to find git root for current cwd", vim.log.levels.ERROR)
-            return
-          end
-
-          local repo_root = vim.trim(root.stdout)
-          local submodule_result = vim
-            .system({ "git", "submodule", "status", "--recursive" }, { cwd = repo_root })
-            :wait()
-
-          if submodule_result.code ~= 0 then
-            vim.notify("Failed to read git submodules", vim.log.levels.ERROR)
-            return
-          end
-
-          local submodules = {}
-          for _, line in ipairs(vim.split(submodule_result.stdout, "\n", { trimempty = true })) do
-            local path = vim.trim(line):match("^%S+%s+([^%s]+)")
-            if path then
-              table.insert(submodules, path)
-            end
-          end
-
-          if vim.tbl_isempty(submodules) then
-            vim.notify("No git submodules found", vim.log.levels.INFO)
-            return
-          end
-
-          table.sort(submodules)
-
-          vim.ui.select(submodules, { prompt = "Select submodule" }, function(choice)
-            if choice == nil then
-              return
-            end
-
-            require("neogit").open({ cwd = vim.fs.joinpath(repo_root, choice) })
+          select_git_submodule(function(path)
+            require("neogit").open({ cwd = path })
           end)
         end,
         desc = "Neogit (Select Submodule)",
