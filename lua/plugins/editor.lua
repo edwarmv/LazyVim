@@ -369,22 +369,6 @@ return {
         return vim.tbl_deep_extend("force", opts or {}, my_opts)
       end,
       keys = {
-        {
-          "<leader>fe",
-          function()
-            Snacks.explorer({ cwd = LazyVim.root() })
-          end,
-          desc = "Explorer Snacks (root dir)",
-        },
-        {
-          "<leader>fE",
-          function()
-            Snacks.explorer()
-          end,
-          desc = "Explorer Snacks (cwd)",
-        },
-        { "<leader>e", false },
-        { "<leader>E", false },
         { "<leader><space>", false },
         {
           "g<c-t>",
@@ -475,6 +459,7 @@ return {
         popup_border_style = "", -- use winborder option
         auto_clean_after_session_restore = true,
         close_if_last_window = true,
+        hide_root_node = true,
         window = {
           mappings = {
             ["<C-s>"] = "split_with_window_picker",
@@ -498,6 +483,12 @@ return {
               },
             },
             ["t"] = false,
+            ["<M-c>"] = {
+              function()
+                require("neo-tree.command").execute({ dir = vim.uv.cwd() })
+              end,
+              desc = "change_dir_to_cwd",
+            },
           },
         },
         filesystem = {
@@ -505,11 +496,14 @@ return {
           filtered_items = {
             visible = true,
           },
-          follow_current_file = { enabled = true },
+          window = {
+            mappings = {
+              ["f"] = "fuzzy_finder",
+            },
+          },
         },
         source_selector = {
           winbar = true,
-          show_scrolled_off_parent_node = true,
         },
         default_component_configs = {
           indent = { padding = 0 },
@@ -540,8 +534,6 @@ return {
         },
       },
       keys = {
-        { "<leader>fe", false },
-        { "<leader>fE", false },
         {
           "<leader>e",
           function()
