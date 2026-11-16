@@ -625,7 +625,7 @@ return {
   },
   {
     "jake-stewart/multicursor.nvim",
-    branch = "native",
+    enabled = false,
     config = function()
       local mc = require("multicursor-nvim")
       mc.setup()

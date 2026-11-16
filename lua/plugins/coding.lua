@@ -159,6 +159,7 @@ return {
   },
   {
     "gbprod/yanky.nvim",
+    optional = true,
     dependencies = {
       enabled = not vim.g.vscode,
       "kkharji/sqlite.lua",
