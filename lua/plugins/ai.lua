@@ -14,7 +14,7 @@ return {
           chat = {
             adapter = {
               name = "copilot",
-              model = "auto",
+              model = "claude-sonnet-5.5",
             },
             keymaps = {
               clear = {
@@ -30,13 +30,13 @@ return {
           inline = {
             adapter = {
               name = "copilot",
-              model = "auto",
+              model = "claude-sonnet-5.5",
             },
           },
           background = {
             adapter = {
               name = "copilot",
-              model = "auto",
+              model = "claude-sonnet-5.5",
             },
             chat = {
               opts = {
